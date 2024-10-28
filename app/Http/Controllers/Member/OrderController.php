@@ -551,7 +551,7 @@ class OrderController extends Controller
         $coupon = Coupon::where('title', $validatedData['coupon'])->first();
 
         $responseCities = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+            'key' => config(key: 'rajaongkir.api_key')
         ])->get('https://pro.rajaongkir.com/api/city');
         $cities = $responseCities['rajaongkir']['results'];
 
@@ -567,7 +567,7 @@ class OrderController extends Controller
         $total_weight = $cart_details->sum('weight');
 
         $responseCost = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+            'key' => config(key: 'rajaongkir.api_key'),
         ])->post('https://pro.rajaongkir.com/api/cost', [
             'origin' => $origin_id,
             'originType' => 'city',
@@ -638,7 +638,7 @@ class OrderController extends Controller
 
         // Fetch city data from RajaOngkir API
         $responseCities = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+            'key' => config(key: 'rajaongkir.api_key')
         ])->get('https://pro.rajaongkir.com/api/city');
         $cities = $responseCities['rajaongkir']['results'];
 
@@ -655,7 +655,7 @@ class OrderController extends Controller
 
         // Fetch shipping cost from RajaOngkir API
         $responseCost = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+            'key' => config(key: 'rajaongkir.api_key'),
         ])->post('https://pro.rajaongkir.com/api/cost', [
             'origin' => $origin_id,
             'originType' => 'city',
@@ -789,7 +789,7 @@ class OrderController extends Controller
         }
 
         $responseCities = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+            'key' => config(key: 'rajaongkir.api_key')
         ])->get('https://pro.rajaongkir.com/api/city');
         $cities = $responseCities['rajaongkir']['results'];
 
@@ -805,7 +805,7 @@ class OrderController extends Controller
         $total_weight = $cart_details->sum('weight');
 
         $responseCost = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+            'key' => config(key: 'rajaongkir.api_key'),
         ])->post('https://pro.rajaongkir.com/api/cost', [
             'origin' => $origin_id,
             'originType' => 'city',
@@ -855,7 +855,7 @@ class OrderController extends Controller
                 return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
             } else {
                 $responseCities = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+                    'key' => config(key: 'rajaongkir.api_key')
                 ])->get('https://pro.rajaongkir.com/api/city');
                 $cities = $responseCities['rajaongkir']['results'];
 
@@ -875,7 +875,7 @@ class OrderController extends Controller
                 $total_weight = $cart_details->sum('weight');
 
                 $responseCost = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+                    'key' => config(key: 'rajaongkir.api_key'),
                 ])->post('https://pro.rajaongkir.com/api/cost', [
                     'origin' => $origin_id,
                     'originType' => 'city',
@@ -935,7 +935,7 @@ class OrderController extends Controller
         $request->session()->put('checkout.note', $request->note);
 
         $responseCities = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+            'key' => config(key: 'rajaongkir.api_key')
         ])->get('https://pro.rajaongkir.com/api/city');
         $cities = $responseCities['rajaongkir']['results'];
 
@@ -952,7 +952,7 @@ class OrderController extends Controller
         $total_weight = $cart_details->sum('weight');
 
         $responseCost = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+            'key' => config(key: 'rajaongkir.api_key'),
         ])->post('https://pro.rajaongkir.com/api/cost', [
             'origin' => $origin_id,
             'originType' => 'city',
@@ -1051,7 +1051,7 @@ class OrderController extends Controller
             //
 
             $responseCities = Http::withHeaders([
-                'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+                'key' => config(key: 'rajaongkir.api_key')
             ])->get('https://pro.rajaongkir.com/api/city');
             $cities = $responseCities['rajaongkir']['results'];
 
@@ -1152,7 +1152,7 @@ class OrderController extends Controller
                 }
 
                 $responseWaybills = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+                    'key' => config(key: 'rajaongkir.api_key'),
                 ])->post('https://pro.rajaongkir.com/api/waybill', [
                     'waybill' => $waybill,
                     'courier' => $courier,
@@ -1274,7 +1274,7 @@ class OrderController extends Controller
         $point = Point::first();
 
         $responseCities = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
+            'key' => config(key: 'rajaongkir.api_key')
         ])->get('https://pro.rajaongkir.com/api/city');
         $cities = $responseCities['rajaongkir']['results'];
 
@@ -1299,7 +1299,7 @@ class OrderController extends Controller
         }
 
         $responseCost = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
+            'key' => config(key: 'rajaongkir.api_key'),
         ])->post('https://pro.rajaongkir.com/api/cost', [
             'origin' => $origin_id,
             'originType' => 'city',
