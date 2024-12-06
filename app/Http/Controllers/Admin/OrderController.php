@@ -514,7 +514,15 @@ class OrderController extends Controller
         $cart = Cart::where('user_id', Auth::user()->id)->first();
         $cart_details = $cart->cart_detail;
 
-        $total_price = $cart_details->sum('price');
+        if (Session::has('final_price') && Session::has('discountStatus')) {
+            Session::forget('final_price');
+            Session::forget('discountStatus');
+            $final_price = $cart_details->sum('price') - ($cart_details->sum('price') * (5 / 100));
+            $total_price = $final_price;
+        } else {
+            $total_price = $cart_details->sum('price');
+        }
+
         $total_weight = $cart_details->sum('weight');
 
         $address = Address::create([
