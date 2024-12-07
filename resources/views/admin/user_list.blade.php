@@ -661,7 +661,8 @@
                                                     alt="profile picture"
                                                     class="w-8 h-8 mr-3 object-cover object-center rounded-full">
                                             @endif
-                                            <p class="text-left">
+                                            <p
+                                                class="truncate hover:w-full hover:overflow-visible hover:whitespace-normal hover:text-ellipsis text-left">
                                                 {{ $user->name }}
                                             </p>
                                         </div>

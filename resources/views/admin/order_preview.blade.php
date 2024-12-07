@@ -239,19 +239,20 @@
     @foreach ($order->order_detail as $order_detail)
         <div class="flex flex-col justify-center w-full p-6">
             @if (strlen($order_detail->product->image) > 30)
-            <img class="mb-4 h-40 w-40 object-cover object-bottom rounded-lg drop-shadow-md"
-                src="{{ asset('storage/' .  $order_detail->product->image) }}"
-                alt="{{  $order_detail->product->image }}" />
+                <img class="mb-4 h-40 w-40 object-cover object-bottom rounded-lg drop-shadow-md"
+                    src="{{ asset('storage/' . $order_detail->product->image) }}"
+                    alt="{{ $order_detail->product->image }}" />
             @else
-            <img class="mb-4 h-40 w-40 object-cover object-bottom rounded-lg drop-shadow-md"
-                src="/images/fotoproduk/{{ $order_detail->product->image }}"
-                alt="{{ $order_detail->product->name }}">
+                <img class="mb-4 h-40 w-40 object-cover object-bottom rounded-lg drop-shadow-md"
+                    src="/images/fotoproduk/{{ $order_detail->product->image }}"
+                    alt="{{ $order_detail->product->name }}">
             @endif
             <div class="flex flex-col justify-center space-y-4">
                 <div class="flex flex-col">
                     <p class="text-base font-semibold text-gray-900">
                         {{ $order_detail->product->name }}</p>
-                    <p class="text-sm font-normal text-gray-600">
+                    <p
+                        class="truncate hover:w-full hover:overflow-visible hover:whitespace-normal hover:text-ellipsis text-sm font-normal text-gray-600">
                         {{ $order_detail->product->description }}</p>
                     <p class="mt-2 text-sm font-normal text-gray-600">
                         ({{ $order_detail->weight }}

@@ -378,7 +378,9 @@
                                                             class="top-0 left-7 absolute w-3 h-3 bg-green-500 rounded-full border border-1 border-yellow"></span>
                                                     @endif
                                                 </div>
-                                                <p class="truncate hover:w-full">{{ $product->name }}</p>
+                                                <p
+                                                    class="truncate hover:w-full hover:overflow-visible hover:whitespace-normal hover:text-ellipsis">
+                                                    {{ $product->name }}</p>
                                             </div>
                                         </td>
                                         @if ($product->discount != 0)
@@ -764,7 +766,7 @@
                                                     @method('delete')
                                                     <button type="button"
                                                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                                                        data-modal-toggle="delete-modal">
+                                                        data-modal-toggle="delete-modal{{ $product->id }}">
                                                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor"
                                                             viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                             <path fill-rule="evenodd"
@@ -790,7 +792,8 @@
                                                             <button type="submit" id="delete" name="delete"
                                                                 class="w-full justify-center text-white inline-flex bg-red-500 hover:bg-red-600 focus:ring-2 focus:outline-none focus:ring-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2">Ya,
                                                                 yakin</button>
-                                                            <button data-modal-toggle="delete-modal" type="button"
+                                                            <button data-modal-toggle="delete-modal{{ $product->id }}"
+                                                                type="button"
                                                                 class="w-full text-gray-500 bg-white hover:bg-gray-100 focus:ring-2 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Tidak,
                                                                 batal</button>
                                                         </div>
