@@ -238,7 +238,8 @@ class ProductController extends Controller
                 "active_2" => "text-yellow-500 rounded md:bg-transparent md:p-0",
                 "pageTitle" => '<mark class="px-2 text-yellow-500 bg-gray-900 rounded">Produk</mark> Kami',
                 'pageDescription' => 'Jelajahi camilan terbaik di <span class="underline underline-offset-2 decoration-4 decoration-yellow-500">Lisahwan</span> dan pilih favorit Anda sekarang!',
-                "products" => Product::whereNotIn('name', ['Rambak Kerbau', 'Kentang Udang'])->get(),
+                "products" => Product::whereNotIn('name', ['Rambak Kerbau'])->get(),
+                // "products" => Product::all(),
                 "carts" => $carts,
                 "shipment_price" => $shipment_price,
                 "admin_fee" => $admin_fee,
@@ -251,7 +252,8 @@ class ProductController extends Controller
                 "active_2" => "text-yellow-500 rounded md:bg-transparent md:p-0",
                 "pageTitle" => '<mark class="px-2 text-yellow-500 bg-gray-900 rounded">Produk</mark> Kami',
                 'pageDescription' => 'Jelajahi camilan terbaik di <span class="underline underline-offset-2 decoration-4 decoration-yellow-500">Lisahwan</span> dan pilih favorit Anda sekarang!',
-                "products" => Product::whereNotIn('name', ['Rambak Kerbau', 'Kentang Udang'])->get()
+                "products" => Product::whereNotIn('name', ['Rambak Kerbau'])->get(),
+                // "products" => Product::all(),
             ]);
         }
     }
