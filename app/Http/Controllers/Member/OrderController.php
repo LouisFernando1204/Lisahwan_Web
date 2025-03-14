@@ -1335,7 +1335,7 @@ class OrderController extends Controller
         }
 
         // dd($shipment_price_check, $cart->shipment_price);
-        if ($shipment_price_check != $shipment_price) {
+        if (($shipment_price_check != $shipment_price) || ($shipment_price_check == null)) {
             Session::put('costs', $costs);
             return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
         }
