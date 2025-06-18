@@ -263,7 +263,7 @@ class ProductController extends Controller
             'weight_edit' => 'required|numeric|min:1',
             'discount_edit' => 'required|numeric|between:0,100',
             'description_edit' => 'required|string|max:255',
-            'special_status_edit' => 'required|string'
+            'special_status' => 'required|string'
         ], [
             'name_edit.required' => 'Nama produk wajib diisi!',
             'name_edit.string' => 'Nama produk wajib berupa karakter!',
@@ -280,8 +280,8 @@ class ProductController extends Controller
             'description_edit.required' => 'Deskripsi wajib diisi!',
             'description_edit.string' => 'Deskripsi wajib berupa karakter!',
             'description_edit.max' => 'Deskripsi maksimal 255 karakter!',
-            'special_status_edit.required' => 'Status spesial wajib diisi!',
-            'special_status_edit.string' => 'Status spesial wajib berupa karakter!'
+            'special_status.required' => 'Status spesial wajib diisi!',
+            'special_status.string' => 'Status spesial wajib berupa karakter!'
         ]);
 
         $product = Product::find($id);
@@ -292,7 +292,7 @@ class ProductController extends Controller
             'price' => $validatedData['price_edit'],
             'weight' => $validatedData['weight_edit'],
             'discount' => $validatedData['discount_edit'],
-            'special_status' => $validatedData['special_status_edit'],
+            'special_status' => $validatedData['special_status'],
         ]);
 
         return back()->with('updateProduct_success', "{$product->name} berhasil diperbarui!");
