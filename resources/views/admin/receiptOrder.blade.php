@@ -82,6 +82,11 @@
                                     {{ $order_detail->quantity }}x</td>
                                 <td style="padding-bottom: 0.5rem;">
                                     &#64;{{ number_format($order_detail->product->price, 0, ',', '.') }}
+                                    @if ($order_detail->product->discount != 0)
+                                        <span style="color: red;">
+                                            - {{ $order_detail->product->discount }}%
+                                        </span>
+                                    @endif
                                 </td>
                                 <td style="padding-bottom: 0.5rem; padding-left: 3rem;">
                                     {{ number_format($order_detail->price, 0, ',', '.') }}</td>

@@ -295,7 +295,7 @@ class OrderController extends Controller
             'quantity.not_in' => 'Oops! Anda lupa mengisikan jumlah pemesanan!'
         ]);
 
-        $total_price = $validatedData['quantity'] * $product->price;
+        $total_price = ($validatedData['quantity'] * $product->price) - ($validatedData['quantity'] * $product->price * ($product->discount / 100));
         $total_weight = $product->weight * $validatedData['quantity'];
 
         $quantity_final = $validatedData['quantity'] - $last_quantity;
