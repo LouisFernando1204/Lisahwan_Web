@@ -111,11 +111,11 @@
             class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-8 sm:gap-y-8 lg:gap-y-12 p-8 sm:p-12 mx-auto">
             <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
                 @if (strlen($product->image) > 30)
-                    <img class="lg:h-screen lg:w-screen lg:object-bottom object-cover rounded-lg drop-shadow-md"
-                        src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" />
+                    <img class="object-contain rounded-lg drop-shadow-md" src="{{ asset('storage/' . $product->image) }}"
+                        alt="{{ $product->name }}" />
                 @else
-                    <img class="lg:h-screen lg:w-screen lg:object-bottom object-cover rounded-lg drop-shadow-md"
-                        src="/images/fotoproduk/{{ $product->image }}" alt="{{ $product->name }}">
+                    <img class="object-contain rounded-lg drop-shadow-md" src="/images/fotoproduk/{{ $product->image }}"
+                        alt="{{ $product->name }}">
                 @endif
                 <button data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800" type="button"
                     onclick="sendWhatsAppMessage('{{ $product->name }}', '{{ $product->price }}', '{{ strlen($product->image) > 30 ? asset('storage/' . $product->image) : asset('images/fotoproduk/' . $product->image) }}')"
@@ -536,17 +536,17 @@
                                 <a href="{{ route('member.products.show', $bestseller->product->id) }}">
                                     <div data-aos="fade-up" data-aos-anchor-placement="top-bottom"
                                         data-aos-duration="800"
-                                        class="relative w-full h-full rounded-lg bg-gray-900 border-gray-800 mx-auto shadow">
+                                        class="relative w-full h-full rounded-lg bg-gray-900 border-gray-800 mx-auto shadow-lg overflow-hidden flex flex-col">
                                         @if (strlen($bestseller->product->image) > 30)
-                                            <img class="hh-3/4 rounded-t-lg w-full object-center object-cover"
+                                            <img class="w-full h-auto"
                                                 src="{{ asset('storage/' . $bestseller->product->image) }}"
                                                 alt="{{ $bestseller->product->image }}" />
                                         @else
-                                            <img class="h-3/4 rounded-t-lg w-full object-center object-cover"
+                                            <img class="w-full h-auto"
                                                 src="/images/fotoproduk/{{ $bestseller->product->image }}"
                                                 alt="{{ $bestseller->product->name }}" />
                                         @endif
-                                        <div class="h-1/4 px-8 pb-2 flex flex-col justify-center items-center">
+                                        <div class="p-4 flex flex-col flex-grow">
                                             <h5
                                                 class="sm:leading-6 md:leading-normal lg:leading-normal text-xl sm:text-3xl md:text-2xl lg:text-xl font-bold tracking-tight text-yellow-500 text-center">
                                                 {{ $bestseller->product->name }}
@@ -587,36 +587,37 @@
                                                     stock
                                                     lagi!</p>
                                             @endif
+                                            <div class="text-right">
+                                                <!-- SVG icon di kanan bawah dari gambar -->
+                                                <form
+                                                    action="{{ route('member.wishlist.store', $bestseller->product->id) }}"
+                                                    method="POST" class="flex justify-end items-center">
+                                                    @csrf
+                                                    @if (
+                                                        $bestseller->product->wishlist->where('user_id', Auth::user()->id)->first() &&
+                                                            $bestseller->product->wishlist->where('user_id', Auth::user()->id)->first()->favorite_status == '1')
+                                                        <button type="submit">
+                                                            <svg class="cursor-pointer w-6 h-6 text-red-600 hover:text-white"
+                                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                                fill="currentColor" viewBox="0 0 20 18">
+                                                                <path
+                                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                            </svg>
+                                                        </button>
+                                                    @else
+                                                        <button type="submit">
+                                                            <svg class="cursor-pointer w-6 h-6 text-white hover:text-red-600"
+                                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                                fill="currentColor" viewBox="0 0 20 18">
+                                                                <path
+                                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                            </svg>
+                                                        </button>
+                                                    @endif
+                                                </form>
+                                            </div>
                                         </div>
                                 </a>
-
-                                <!-- SVG icon di kanan bawah dari gambar -->
-                                <form action="{{ route('member.wishlist.store', $bestseller->product->id) }}"
-                                    method="POST">
-                                    @csrf
-                                    @if (
-                                        $bestseller->product->wishlist->where('user_id', Auth::user()->id)->first() &&
-                                            $bestseller->product->wishlist->where('user_id', Auth::user()->id)->first()->favorite_status == '1')
-                                        <button type="submit">
-                                            <svg class="cursor-pointer absolute w-6 h-6 text-red-600 bottom-4 right-4 hover:text-white"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                viewBox="0 0 20 18">
-                                                <path
-                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                            </svg>
-                                        </button>
-                                    @else
-                                        <button type="submit">
-                                            <svg class="cursor-pointer absolute w-6 h-6 text-white bottom-4 right-4 hover:text-red-600"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                viewBox="0 0 20 18">
-                                                <path
-                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                            </svg>
-                                        </button>
-                                    @endif
-                                </form>
-
                                 <!-- Diskon di pojok kanan atas -->
                                 @if ($bestseller->product->discount != 0)
                                     <div

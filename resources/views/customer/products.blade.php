@@ -230,15 +230,15 @@
                                 <a href="{{ route('member.products.show', $product->id) }}">
                         @endif
                         <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                            class="relative w-full h-full rounded-lg bg-gray-900 border-4 border-yellow-500 mx-auto shadow">
+                            class="relative w-full h-full rounded-lg bg-gray-900 border-gray-800 mx-auto shadow-lg overflow-hidden flex flex-col">
                             @if (strlen($product->image) > 30)
-                                <img class="h-3/4 w-full object-cover" src="{{ asset('storage/' . $product->image) }}"
+                                <img class="w-full h-auto" src="{{ asset('storage/' . $product->image) }}"
                                     alt="{{ $product->image }}" />
                             @else
-                                <img class="h-3/4 w-full object-cover" src="/images/fotoproduk/{{ $product->image }}"
+                                <img class="w-full h-auto" src="/images/fotoproduk/{{ $product->image }}"
                                     alt="{{ $product->image }}" />
                             @endif
-                            <div class="h-1/4 px-8 pb-2 flex flex-col justify-center items-center">
+                            <div class="p-4 flex flex-col flex-grow">
                                 <div class="flex flex-row space-x-1 justify-center items-center">
                                     <svg class="me-1 w-5 h-5 text-yellow-500" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -289,47 +289,48 @@
                                         stock
                                         lagi!</p>
                                 @endif
+                                <div class="text-right">
+                                    <!--SVG icon di kanan bawah dari gambar -->
+                                    <form action="{{ route('member.wishlist.store', $product->id) }}" method="POST"
+                                        class="flex justify-end items-center">
+                                        @csrf
+                                        @auth
+                                            @if (
+                                                $product->wishlist->where('user_id', Auth::user()->id)->first() &&
+                                                    $product->wishlist->where('user_id', Auth::user()->id)->first()->favorite_status == '1')
+                                                <button type="submit">
+                                                    <svg class="cursor-pointer w-6 h-6 text-red-600 hover:text-white"
+                                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="currentColor" viewBox="0 0 20 18">
+                                                        <path
+                                                            d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                    </svg>
+                                                </button>
+                                            @else
+                                                <button type="submit">
+                                                    <svg class="cursor-pointer w-6 h-6 text-white hover:text-red-600"
+                                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="currentColor" viewBox="0 0 20 18">
+                                                        <path
+                                                            d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        @endauth
+                                        @guest
+                                            <button type="submit">
+                                                <svg class="cursor-pointer w-6 h-6 text-white hover:text-red-600"
+                                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                    viewBox="0 0 20 18">
+                                                    <path
+                                                        d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                </svg>
+                                            </button>
+                                        @endguest
+                                    </form>
+                                </div>
                             </div>
                             </a>
-
-                            <!--SVG icon di kanan bawah dari gambar -->
-                            <form action="{{ route('member.wishlist.store', $product->id) }}" method="POST">
-                                @csrf
-                                @auth
-                                    @if (
-                                        $product->wishlist->where('user_id', Auth::user()->id)->first() &&
-                                            $product->wishlist->where('user_id', Auth::user()->id)->first()->favorite_status == '1')
-                                        <button type="submit">
-                                            <svg class="cursor-pointer absolute w-6 h-6 text-red-600 bottom-4 right-4 hover:text-white"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                viewBox="0 0 20 18">
-                                                <path
-                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                            </svg>
-                                        </button>
-                                    @else
-                                        <button type="submit">
-                                            <svg class="cursor-pointer absolute w-6 h-6 text-white bottom-4 right-4 hover:text-red-600"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                viewBox="0 0 20 18">
-                                                <path
-                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                            </svg>
-                                        </button>
-                                    @endif
-                                @endauth
-                                @guest
-                                    <button type="submit">
-                                        <svg class="cursor-pointer absolute w-6 h-6 text-white bottom-4 right-4 hover:text-red-600"
-                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                            viewBox="0 0 20 18">
-                                            <path
-                                                d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                        </svg>
-                                    </button>
-                                @endguest
-                            </form>
-
                             <!-- Diskon di pojok kanan atas -->
                             @if ($product->discount != 0)
                                 <div
@@ -356,15 +357,15 @@
                                 <a href="{{ route('member.products.show', $product->id) }}">
                         @endif
                         <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                            class="relative w-full h-full rounded-lg bg-gray-900 border-gray-800 mx-auto shadow">
+                            class="relative w-full h-full rounded-lg bg-gray-900 border-gray-800 mx-auto shadow-lg overflow-hidden flex flex-col justify-between">
                             @if (strlen($product->image) > 30)
-                                <img class="h-3/4 rounded-t-lg w-full object-cover"
-                                    src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->image }}" />
+                                <img class="w-full h-auto" src="{{ asset('storage/' . $product->image) }}"
+                                    alt="{{ $product->image }}" />
                             @else
-                                <img class="h-3/4 rounded-t-lg w-full object-cover"
-                                    src="/images/fotoproduk/{{ $product->image }}" alt="{{ $product->image }}" />
+                                <img class="w-full h-auto" src="/images/fotoproduk/{{ $product->image }}"
+                                    alt="{{ $product->image }}" />
                             @endif
-                            <div class="h-1/4 px-8 pb-2 flex flex-col justify-center items-center">
+                            <div class="p-4 flex flex-col flex-grow">
                                 <h5
                                     class="sm:leading-6 md:leading-normal lg:leading-normal text-xl sm:text-2xl md:text-2xl lg:text-xl font-bold tracking-tight text-yellow-500 text-center">
                                     {{ $product->name }}
@@ -403,47 +404,48 @@
                                         stock
                                         lagi!</p>
                                 @endif
+                                <!--SVG icon di kanan bawah dari gambar -->
+                                <div class="text-right">
+                                    <form action="{{ route('member.wishlist.store', $product->id) }}" method="POST"
+                                        class="flex justify-end items-center">
+                                        @csrf
+                                        @auth
+                                            @if (
+                                                $product->wishlist->where('user_id', Auth::user()->id)->first() &&
+                                                    $product->wishlist->where('user_id', Auth::user()->id)->first()->favorite_status == '1')
+                                                <button type="submit">
+                                                    <svg class="cursor-pointer w-6 h-6 text-red-600 hover:text-white"
+                                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="currentColor" viewBox="0 0 20 18">
+                                                        <path
+                                                            d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                    </svg>
+                                                </button>
+                                            @else
+                                                <button type="submit">
+                                                    <svg class="cursor-pointer w-6 h-6 text-white hover:text-red-600"
+                                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="currentColor" viewBox="0 0 20 18">
+                                                        <path
+                                                            d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        @endauth
+                                        @guest
+                                            <button type="submit">
+                                                <svg class="cursor-pointer w-6 h-6 text-white hover:text-red-600"
+                                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                    viewBox="0 0 20 18">
+                                                    <path
+                                                        d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
+                                                </svg>
+                                            </button>
+                                        @endguest
+                                    </form>
+                                </div>
                             </div>
                             </a>
-
-                            <!--SVG icon di kanan bawah dari gambar -->
-                            <form action="{{ route('member.wishlist.store', $product->id) }}" method="POST">
-                                @csrf
-                                @auth
-                                    @if (
-                                        $product->wishlist->where('user_id', Auth::user()->id)->first() &&
-                                            $product->wishlist->where('user_id', Auth::user()->id)->first()->favorite_status == '1')
-                                        <button type="submit">
-                                            <svg class="cursor-pointer absolute w-6 h-6 text-red-600 bottom-4 right-4 hover:text-white"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                viewBox="0 0 20 18">
-                                                <path
-                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                            </svg>
-                                        </button>
-                                    @else
-                                        <button type="submit">
-                                            <svg class="cursor-pointer absolute w-6 h-6 text-white bottom-4 right-4 hover:text-red-600"
-                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                viewBox="0 0 20 18">
-                                                <path
-                                                    d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                            </svg>
-                                        </button>
-                                    @endif
-                                @endauth
-                                @guest
-                                    <button type="submit">
-                                        <svg class="cursor-pointer absolute w-6 h-6 text-white bottom-4 right-4 hover:text-red-600"
-                                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                            viewBox="0 0 20 18">
-                                            <path
-                                                d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                                        </svg>
-                                    </button>
-                                @endguest
-                            </form>
-
                             <!-- Diskon di pojok kanan atas -->
                             @if ($product->discount != 0)
                                 <div
