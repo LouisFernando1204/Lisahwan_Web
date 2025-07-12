@@ -58,8 +58,9 @@
                     <hr data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                         class="h-px my-4 border-0 bg-gray-400">
                     <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                        class="text-base font-medium text-gray-900">{{ $cart_detail->product->description }}</p>
-
+                        class="text-base font-medium text-gray-900 break-words whitespace-normal text-left">
+                        {{ $cart_detail->product->description }}
+                    </p>
                     <div class="max-w-xs mt-8">
                         <label data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                             for="{{ $cart_detail->product->id }}"
