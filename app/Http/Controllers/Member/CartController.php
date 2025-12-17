@@ -283,13 +283,13 @@ class CartController extends Controller
         // Debug untuk memeriksa URL sebelumnya
         // dd($previousUrl);
 
-        // Pengecekan kondisi untuk city dan courier hanya jika URL sebelumnya adalah member/checkout
+        // Pengecekan kondisi untuk district_id dan courier hanya jika URL sebelumnya adalah member/checkout
         if (strpos($previousUrl, 'member/checkout') !== false) {
-            if (!$request->city && !$courier) {
-                return redirect()->back()->withErrors(['couriercityForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kota tujuan!"]);
+            if (!$request->district_id && !$courier) {
+                return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
             }
-            if (!$request->city) {
-                return redirect()->back()->withErrors(['cityForgotten_error' => "Oops, anda lupa memilih kota tujuan!"]);
+            if (!$request->district_id) {
+                return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
             }
             if (!$courier) {
                 return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
@@ -309,38 +309,27 @@ class CartController extends Controller
 
             // Pengecekan dan pemanggilan API RajaOngkir hanya jika URL adalah member/checkout
             $costs = null;
-            if (strpos($previousUrl, 'member/checkout') !== false) {
-                // Ambil data kota dari API RajaOngkir
-                $responseCities = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb'
-                ])->get('https://pro.rajaongkir.com/api/city');
-                $cities = $responseCities['rajaongkir']['results'];
+            if (strpos($previousUrl, 'member/checkout') !== false && $cart->cart_detail->count() > 0) {
+                $origin_id = 5902;
+                $destination_id = $request->district_id;
 
-                // Cari ID kota asal (Surabaya)
-                $origin_id = null;
-                foreach ($cities as $city) {
-                    if ($city['city_name'] == 'Surabaya') {
-                        $origin_id = $city['city_id'];
-                        break;
-                    }
+                $total_weight = $cart->cart_detail->sum('weight');
+
+                try {
+                    $responseCost = Http::withHeaders([
+                        'key' => config('rajaongkir.api_key'),
+                        'Content-Type' => 'application/x-www-form-urlencoded'
+                    ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+                        'origin' => $origin_id,
+                        'destination' => $destination_id,
+                        'weight' => $total_weight,
+                        'courier' => $courier
+                    ]);
+                    $body = $responseCost->json();
+                    $costs = $body['data'] ?? [];
+                } catch (\Exception $e) {
+                    // Silent fail jika API error
                 }
-
-                // Hitung total berat keranjang
-                $cart_details = $cart->cart_detail;
-                $total_weight = $cart_details->sum('weight');
-
-                // Hitung biaya pengiriman
-                $responseCost = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
-                ])->post('https://pro.rajaongkir.com/api/cost', [
-                    'origin' => $origin_id,
-                    'originType' => 'city',
-                    'destination' => $request->city,
-                    'destinationType' => 'city',
-                    'weight' => $total_weight,
-                    'courier' => $courier
-                ]);
-                $costs = $responseCost['rajaongkir'];
             }
 
             // Hapus CartDetail
@@ -370,6 +359,6 @@ class CartController extends Controller
         }
 
         // Jika cartDetail tidak ditemukan
-        return back()->withErrors(['error' => 'Detail keranjang tidak ditemukan']);
+        return back()->withErrors(provider: ['error' => 'Detail keranjang tidak ditemukan']);
     }
 }

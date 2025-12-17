@@ -23,6 +23,28 @@ use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
 {
+    public function getCities($province_id)
+    {
+        $response = Http::withHeaders([
+            'key' => config('rajaongkir.api_key')
+        ])->get('https://rajaongkir.komerce.id/api/v1/destination/city/' . $province_id);
+
+        $data = $response->json();
+
+        return response()->json($data['data'] ?? []);
+    }
+
+    public function getDistricts($city_id)
+    {
+        $response = Http::withHeaders([
+            'key' => config('rajaongkir.api_key')
+        ])->get('https://rajaongkir.komerce.id/api/v1/destination/district/' . $city_id);
+
+        $data = $response->json();
+
+        return response()->json($data['data'] ?? []);
+    }
+
     public function handleTransactionStatus(Request $request)
     {
         // Ambil semua parameter dari URL
@@ -518,23 +540,21 @@ class OrderController extends Controller
 
     public function checkCoupon(Request $request)
     {
-        // Simpan data alamat ke session
         $request->session()->put('checkout.address_id', $request->address_id);
         $request->session()->put('checkout.address', $request->address);
-        $request->session()->put('checkout.city', $request->city);
-        // $request->session()->put('checkout.province', $request->province);
-        // $request->session()->put('checkout.postal_code', $request->postal_code);
+        $request->session()->put('checkout.province_id', $request->province_id);
+        $request->session()->put('checkout.city_id', $request->city_id);
+        $request->session()->put('checkout.district_id', $request->district_id);
         $request->session()->put('checkout.note', $request->note);
 
-        // Ambil data keranjang pengguna
         $cart = Cart::where('user_id', Auth::user()->id)->first();
-        $courier = $cart ? $cart->courier : null;
+        $courier = $request->courier ?? ($cart ? $cart->courier : null);
 
-        if (!$request->city && !$courier) {
-            return redirect()->back()->withErrors(['couriercityForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kota tujuan!"]);
+        if (!$request->district_id && !$courier) {
+            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
         }
-        if (!$request->city) {
-            return redirect()->back()->withErrors(['cityForgotten_error' => "Oops, anda lupa memilih kota tujuan!"]);
+        if (!$request->district_id) {
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
         }
         if (!$courier) {
             return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
@@ -550,33 +570,29 @@ class OrderController extends Controller
 
         $coupon = Coupon::where('title', $validatedData['coupon'])->first();
 
-        $responseCities = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key')
-        ])->get('https://pro.rajaongkir.com/api/city');
-        $cities = $responseCities['rajaongkir']['results'];
-
-        $origin_id = null;
-        foreach ($cities as $city) {
-            if ($city['city_name'] == 'Surabaya') {
-                $origin_id = $city['city_id'];
-                break;
-            }
-        }
-
         $cart_details = $cart->cart_detail;
         $total_weight = $cart_details->sum('weight');
+        $origin_district_id = 5902;
+        $costs = [];
 
-        $responseCost = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key'),
-        ])->post('https://pro.rajaongkir.com/api/cost', [
-            'origin' => $origin_id,
-            'originType' => 'city',
-            'destination' => $request->city,
-            'destinationType' => 'city',
-            'weight' => $total_weight,
-            'courier' => $courier
-        ]);
-        $costs = $responseCost['rajaongkir'];
+        try {
+            $responseCost = Http::withHeaders([
+                'key' => config('rajaongkir.api_key'),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+                'origin' => $origin_district_id,
+                'destination' => $request->district_id,
+                'weight' => $total_weight,
+                'courier' => $courier
+            ]);
+
+            $responseBody = $responseCost->json();
+            if (isset($responseBody['meta']['code']) && $responseBody['meta']['code'] == 200) {
+                $costs = $responseBody['data'] ?? [];
+            }
+        } catch (\Exception $e) {
+            $costs = [];
+        }
 
         if (!$coupon) {
             Session::put('costs', $costs);
@@ -608,80 +624,66 @@ class OrderController extends Controller
 
     public function chooseCoupon(Request $request, $id)
     {
-        // Save address data to session
         $request->session()->put('checkout.address_id', $request->address_id);
         $request->session()->put('checkout.address', $request->address);
-        $request->session()->put('checkout.city', $request->city);
+        $request->session()->put('checkout.province_id', $request->province_id);
+        $request->session()->put('checkout.city_id', $request->city_id);
+        $request->session()->put('checkout.district_id', $request->district_id);
         $request->session()->put('checkout.note', $request->note);
 
-        // Fetch user's cart
         $cart = Cart::where('user_id', Auth::user()->id)->first();
-        $courier = $cart ? $cart->courier : null;
+        $courier = $request->courier ?? ($cart ? $cart->courier : null);
 
-        // Check for city and courier
-        if (!$request->city && !$courier) {
-            return redirect()->back()->withErrors(['couriercityForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kota tujuan!"]);
+        if (!$request->district_id && !$courier) {
+            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
         }
-        if (!$request->city) {
-            return redirect()->back()->withErrors(['cityForgotten_error' => "Oops, anda lupa memilih kota tujuan!"]);
+        if (!$request->district_id) {
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
         }
         if (!$courier) {
             return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
         }
 
-        // Fetch coupon and user coupon data
         $coupon = Coupon::findOrFail($id);
         $user_coupon = $coupon->usercoupon->where('user_id', Auth::user()->id)->where("coupon_id", $id)->first();
-
-        // Fetch cart details
         $cart_details = $cart->cart_detail;
 
-        // Fetch city data from RajaOngkir API
-        $responseCities = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key')
-        ])->get('https://pro.rajaongkir.com/api/city');
-        $cities = $responseCities['rajaongkir']['results'];
+        $total_weight = $cart_details->sum('weight');
+        $origin_district_id = 5902;
+        $costs = [];
 
-        $origin_id = null;
-        foreach ($cities as $city) {
-            if ($city['city_name'] == 'Surabaya') {
-                $origin_id = $city['city_id'];
-                break;
+        try {
+            $responseCost = Http::withHeaders([
+                'key' => config('rajaongkir.api_key'),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+                'origin' => $origin_district_id,
+                'destination' => $request->district_id,
+                'weight' => $total_weight,
+                'courier' => $courier
+            ]);
+
+            $responseBody = $responseCost->json();
+            if (isset($responseBody['meta']['code']) && $responseBody['meta']['code'] == 200) {
+                $costs = $responseBody['data'] ?? [];
             }
+        } catch (\Exception $e) {
+            $costs = [];
         }
 
-        // Calculate total weight of cart
-        $total_weight = $cart_details->sum('weight');
-
-        // Fetch shipping cost from RajaOngkir API
-        $responseCost = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key'),
-        ])->post('https://pro.rajaongkir.com/api/cost', [
-            'origin' => $origin_id,
-            'originType' => 'city',
-            'destination' => $request->city,
-            'destinationType' => 'city',
-            'weight' => $total_weight,
-            'courier' => $courier
-        ]);
-        $costs = $responseCost['rajaongkir'];
-
-        // If the coupon is already active, deactivate it
         if (Session::has('couponStatus_' . $id)) {
             foreach ($cart_details as $cart_detail) {
-                // Restore original price if it was stored in the session
+                // Restore harga asli
                 $originalPriceKey = 'originalPrice_' . $cart_detail->id;
                 if (Session::has($originalPriceKey)) {
                     $originalPrice = Session::get($originalPriceKey);
                     $cart_detail->update(['price' => $originalPrice]);
-                    Session::forget($originalPriceKey); // Clear the stored original price
+                    Session::forget($originalPriceKey);
                 }
             }
 
-            // Increase user coupon quantity back
             $user_coupon->update(['quantity' => $user_coupon->quantity + 1]);
 
-            // Remove the coupon status from the session
             Session::forget('couponStatus_' . $id);
             Session::put('activeCoupons', array_diff(Session::get('activeCoupons', []), [$id]));
 
@@ -690,7 +692,6 @@ class OrderController extends Controller
                 'costs' => $costs
             ]);
         } else {
-            // Deactivate any other active coupons
             $activeCouponsStatus = Session::get('activeCoupons', []);
             foreach ($activeCouponsStatus as $couponStatus) {
                 if ($couponStatus != $id) {
@@ -705,17 +706,12 @@ class OrderController extends Controller
                             Session::forget($originalPriceKey);
                         }
                     }
-
                     $activeUserCoupon->update(['quantity' => $activeUserCoupon->quantity + 1]);
-
                     Session::forget('couponStatus_' . $couponStatus);
                 }
             }
-
-            // Clear all active coupons
             Session::forget('activeCoupons');
 
-            // Apply the new coupon if valid
             $now = Carbon::now();
             if ($now >= $coupon->starting_time && $now <= $coupon->ending_time && $user_coupon->quantity > 0) {
                 foreach ($cart_details as $cart_detail) {
@@ -751,25 +747,21 @@ class OrderController extends Controller
 
     public function activatePoint(Request $request)
     {
-        // dd($request->city, $request->courier);
-        // Simpan data alamat ke session
         $request->session()->put('checkout.address_id', $request->address_id);
         $request->session()->put('checkout.address', $request->address);
-        $request->session()->put('checkout.city', $request->city);
-        // $request->session()->put('checkout.province', $request->province);
-        // $request->session()->put('checkout.postal_code', $request->postal_code);
+        $request->session()->put('checkout.province_id', $request->province_id);
+        $request->session()->put('checkout.city_id', $request->city_id);
+        $request->session()->put('checkout.district_id', $request->district_id);
         $request->session()->put('checkout.note', $request->note);
 
-        // Ambil data keranjang pengguna
         $cart = Cart::where('user_id', Auth::user()->id)->first();
-        $courier = $cart ? $cart->courier : null;
+        $courier = $request->courier ?? ($cart ? $cart->courier : null);
 
-        // Pengecekan kondisi untuk city dan courier
-        if (!$request->city && !$courier) {
-            return redirect()->back()->withErrors(['couriercityForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kota tujuan!"]);
+        if (!$request->district_id && !$courier) {
+            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
         }
-        if (!$request->city) {
-            return redirect()->back()->withErrors(['cityForgotten_error' => "Oops, anda lupa memilih kota tujuan!"]);
+        if (!$request->district_id) {
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
         }
         if (!$courier) {
             return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
@@ -788,33 +780,32 @@ class OrderController extends Controller
             $difference = $reward;
         }
 
-        $responseCities = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key')
-        ])->get('https://pro.rajaongkir.com/api/city');
-        $cities = $responseCities['rajaongkir']['results'];
-
-        $origin_id = null;
-        foreach ($cities as $city) {
-            if ($city['city_name'] == 'Surabaya') {
-                $origin_id = $city['city_id'];
-                break;
-            }
-        }
-
+        $origin_district_id = 5902;
         $cart_details = $cart->cart_detail;
         $total_weight = $cart_details->sum('weight');
+        $costs = [];
 
-        $responseCost = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key'),
-        ])->post('https://pro.rajaongkir.com/api/cost', [
-            'origin' => $origin_id,
-            'originType' => 'city',
-            'destination' => $request->city,
-            'destinationType' => 'city',
-            'weight' => $total_weight,
-            'courier' => $courier
-        ]);
-        $costs = $responseCost['rajaongkir'];
+        try {
+            $responseCost = Http::withHeaders([
+                'key' => config('rajaongkir.api_key'),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+                'origin' => $origin_district_id,
+                'destination' => $request->district_id,
+                'weight' => $total_weight,
+                'courier' => $courier
+            ]);
+
+            $responseBody = $responseCost->json();
+
+            if (isset($responseBody['meta']['code']) && $responseBody['meta']['code'] == 200) {
+                $costs = $responseBody['data'] ?? [];
+            } else {
+                $costs = [];
+            }
+        } catch (\Exception $e) {
+            $costs = [];
+        }
 
         if (Session::has('pointStatus')) {
             Session::forget('pointStatus');
@@ -833,15 +824,15 @@ class OrderController extends Controller
 
     public function checkShipmentPrice(Request $request)
     {
-        // dd($request->courier);
-        // Simpan data alamat ke session
         $request->session()->put('checkout.address_id', $request->address_id);
         $request->session()->put('checkout.address', $request->address);
-        $request->session()->put('checkout.city', $request->city);
+        $request->session()->put('checkout.province_id', $request->province_id);
+        $request->session()->put('checkout.city_id', $request->city_id);
+        $request->session()->put('checkout.district_id', $request->district_id);
         $request->session()->put('checkout.note', $request->note);
 
-        if (!$request->city) {
-            return redirect()->back()->withErrors(['cityForgotten_error' => "Oops, anda lupa memilih kota tujuan!"]);
+        if (!$request->district_id) {
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
         } else {
             if (!$request->courier) {
                 $courierStatus_lion = Session::get('courierStatus_lion');
@@ -854,72 +845,53 @@ class OrderController extends Controller
                 }
                 return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
             } else {
-                $responseCities = Http::withHeaders([
-                    'key' => config(key: 'rajaongkir.api_key')
-                ])->get('https://pro.rajaongkir.com/api/city');
-                $cities = $responseCities['rajaongkir']['results'];
-
-                $origin_id = null;
-                foreach ($cities as $city) {
-                    if ($city['city_name'] == 'Surabaya') {
-                        $origin_id = $city['city_id'];
-                        break;
-                    }
-                }
+                $origin_district_id = 5902;
 
                 $cart = Cart::where('user_id', Auth::user()->id)->first();
-                $cart->update([
-                    'courier' => $request->courier
-                ]);
+                $cart->update(['courier' => $request->courier]);
+
                 $cart_details = $cart->cart_detail;
                 $total_weight = $cart_details->sum('weight');
 
                 $responseCost = Http::withHeaders([
-                    'key' => config(key: 'rajaongkir.api_key'),
-                ])->post('https://pro.rajaongkir.com/api/cost', [
-                    'origin' => $origin_id,
-                    'originType' => 'city',
-                    'destination' => $request->city,
-                    'destinationType' => 'city',
+                    'key' => config('rajaongkir.api_key'),
+                    'Content-Type' => 'application/x-www-form-urlencoded'
+                ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+                    'origin' => $origin_district_id,
+                    'destination' => $request->district_id,
                     'weight' => $total_weight,
                     'courier' => $request->courier
                 ]);
-                $costs = $responseCost['rajaongkir'];
 
-                if (!empty($costs['results'])) {
-                    // Periksa apakah costs di dalam results kosong
-                    $allCostsEmpty = true;
-                    foreach ($costs['results'] as $result) {
-                        if (!empty($result['costs'])) {
-                            $allCostsEmpty = false;
-                            break;
-                        }
-                    }
+                $responseBody = $responseCost->json();
 
-                    if ($allCostsEmpty) {
+                if (isset($responseBody['meta']['code']) && $responseBody['meta']['code'] == 200) {
+                    $costs = $responseBody['data'];
+
+                    if (empty($costs)) {
                         return back()->withErrors([
-                            'service_NOTAVAILABLE' => 'Layanan pengiriman tidak tersedia! Mohon memilih jasa pengiriman yang lain!'
-                        ]);
-                    } else {
-                        Session::push('arraycourierStatus', $request->courier);
-                        Session::put('courierStatus_' . $request->courier, true);
-
-                        $activeCouriersStatus = Session::get('arraycourierStatus', []);
-                        foreach ($activeCouriersStatus as $courierStatus) {
-                            if ($courierStatus != $request->courier) {
-                                Session::put('arraycourierStatus', array_diff(Session::get('arraycourierStatus', []), [$courierStatus]));
-                                Session::forget('courierStatus_' . $courierStatus);
-                            }
-                        }
-
-                        return back()->with([
-                            'costs' => $costs,
-                            'courier' => $request->courier
+                            'service_NOTAVAILABLE' => 'Layanan pengiriman tidak tersedia!'
                         ]);
                     }
+
+                    Session::push('arraycourierStatus', $request->courier);
+                    Session::put('courierStatus_' . $request->courier, true);
+
+                    $activeCouriersStatus = Session::get('arraycourierStatus', []);
+                    foreach ($activeCouriersStatus as $courierStatus) {
+                        if ($courierStatus != $request->courier) {
+                            Session::put('arraycourierStatus', array_diff(Session::get('arraycourierStatus', []), [$courierStatus]));
+                            Session::forget('courierStatus_' . $courierStatus);
+                        }
+                    }
+
+                    return back()->with([
+                        'costs' => $costs,
+                        'courier' => $request->courier
+                    ]);
                 } else {
                     return back()->withErrors([
-                        'service_NOTAVAILABLE' => 'Layanan pengiriman tidak tersedia! Mohon memilih jasa pengiriman yang lain!'
+                        'service_NOTAVAILABLE' => 'Gagal terhubung ke API RajaOngkir atau parameter salah.'
                     ]);
                 }
             }
@@ -928,81 +900,71 @@ class OrderController extends Controller
 
     public function chooseShipmentPrice(Request $request, $id)
     {
-        // Simpan data alamat ke session
         $request->session()->put('checkout.address_id', $request->address_id);
         $request->session()->put('checkout.address', $request->address);
-        $request->session()->put('checkout.city', $request->city);
+        $request->session()->put('checkout.province_id', $request->province_id);
+        $request->session()->put('checkout.city_id', $request->city_id);
+        $request->session()->put('checkout.district_id', $request->district_id);
         $request->session()->put('checkout.note', $request->note);
 
-        $responseCities = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key')
-        ])->get('https://pro.rajaongkir.com/api/city');
-        $cities = $responseCities['rajaongkir']['results'];
-
-        $origin_id = null;
-        foreach ($cities as $city) {
-            if ($city['city_name'] == 'Surabaya') {
-                $origin_id = $city['city_id'];
-                break;
-            }
-        }
+        $origin_district_id = 5902;
 
         $cart = Cart::where('user_id', Auth::user()->id)->first();
         $cart_details = $cart->cart_detail;
         $total_weight = $cart_details->sum('weight');
 
         $responseCost = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key'),
-        ])->post('https://pro.rajaongkir.com/api/cost', [
-            'origin' => $origin_id,
-            'originType' => 'city',
-            'destination' => $request->city,
-            'destinationType' => 'city',
+            'key' => config('rajaongkir.api_key'),
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+            'origin' => $origin_district_id,
+            'destination' => $request->district_id,
             'weight' => $total_weight,
             'courier' => $request->courier
         ]);
-        $costs = $responseCost['rajaongkir'];
+
+        $responseBody = $responseCost->json();
+        $costs = $responseBody['data'] ?? [];
 
         $shipmentPrice = null;
         $serviceName = null;
         $serviceDescription = null;
-        foreach ($costs['results'] as $cost) {
-            foreach ($cost['costs'] as $index => $cost_detail) {
-                $serviceName = $cost_detail['service'];
-                $serviceDescription = $cost_detail['description'];
-                if ($index == $id) {
-                    foreach ($cost_detail['cost'] as $service) {
-                        $shipmentPrice = $service['value'];
-                        break;
-                    }
-                    break;
+
+        if (isset($costs[$id])) {
+            $selectedService = $costs[$id];
+
+            $shipmentPrice = $selectedService['cost'];
+            $serviceName = $selectedService['service'];
+            $serviceDescription = $selectedService['description'];
+        }
+
+        if ($shipmentPrice !== null) {
+            $cart->update([
+                "shipment_price" => $shipmentPrice
+            ]);
+
+            $destinationId = $request->district_id;
+            $sessionKey = 'costStatus_' . $id . '_' . $destinationId . '_' . $request->courier;
+
+            Session::push('arraycostStatus', $sessionKey);
+            Session::put($sessionKey, true);
+
+            $activeCostStatus = Session::get('arraycostStatus', []);
+            foreach ($activeCostStatus as $costStatus) {
+                if ($costStatus != $sessionKey) {
+                    Session::put('arraycostStatus', array_diff($activeCostStatus, [$costStatus]));
+                    Session::forget($costStatus);
                 }
             }
+
+            return redirect()->route('member.checkout')->with([
+                'chooseShipmentPrice_success',
+                "Anda memilih {$serviceName} ({$serviceDescription})!",
+                'costs' => $costs
+            ]);
+        } else {
+            return back()->withErrors(['error' => 'Gagal memilih layanan pengiriman.']);
         }
-
-        $cart->update([
-            "shipment_price" => $shipmentPrice
-        ]);
-
-        $city = $request->city; // Dapatkan city dari request
-        $sessionKey = 'costStatus_' . $id . '_' . $city . '_' . $request->courier; // Buat kunci unik untuk session
-
-        Session::push('arraycostStatus', $sessionKey);
-        Session::put($sessionKey, true);
-
-        $activeCostStatus = Session::get('arraycostStatus', []);
-        foreach ($activeCostStatus as $costStatus) {
-            if ($costStatus != $sessionKey) {
-                Session::put('arraycostStatus', array_diff($activeCostStatus, [$costStatus]));
-                Session::forget($costStatus);
-            }
-        }
-
-        return redirect()->route('member.checkout')->with([
-            'chooseShipmentPrice_success',
-            "Anda memilih {$serviceName} ({$serviceDescription})!",
-            'costs' => $costs
-        ]);
     }
 
     /**
@@ -1050,10 +1012,11 @@ class OrderController extends Controller
             }
             //
 
-            $responseCities = Http::withHeaders([
-                'key' => config(key: 'rajaongkir.api_key')
-            ])->get('https://pro.rajaongkir.com/api/city');
-            $cities = $responseCities['rajaongkir']['results'];
+            $responseProvinces = Http::withHeaders([
+                'key' => config('rajaongkir.api_key')
+            ])->get('https://rajaongkir.komerce.id/api/v1/destination/province');
+
+            $provinces = $responseProvinces['data'] ?? [];
 
             return view('customer.checkout', [
                 "TabTitle" => "Checkout",
@@ -1068,7 +1031,7 @@ class OrderController extends Controller
                 "total_money" => $poin_to_money,
                 "reward_now" => $reward_now,
                 "point" => $point,
-                "cities" => $cities,
+                "provinces" => $provinces,
                 "admin_fee" => $admin_fee,
             ]);
         }
@@ -1151,43 +1114,63 @@ class OrderController extends Controller
                     $courier = 'anteraja';
                 }
 
-                $responseWaybills = Http::withHeaders([
-                    'key' => config(key: 'rajaongkir.api_key'),
-                ])->post('https://pro.rajaongkir.com/api/waybill', [
-                    'waybill' => $waybill,
-                    'courier' => $courier,
-                ]);
+                try {
+                    $queryParams = http_build_query([
+                        'awb' => $waybill,
+                        'courier' => $courier,
+                    ]);
 
-                $responseJson = $responseWaybills->json();
+                    $responseWaybills = Http::withHeaders([
+                        'key' => config('rajaongkir.api_key'),
+                    ])->post('https://rajaongkir.komerce.id/api/v1/track/waybill?' . $queryParams);
 
-                if (isset($responseJson['rajaongkir']['status']['code']) && $responseJson['rajaongkir']['status']['code'] !== 200) {
+                    $responseBody = $responseWaybills->json();
+
+                    if (isset($responseBody['meta']['code']) && $responseBody['meta']['code'] == 200) {
+                        $trackData = $responseBody['data'];
+
+                        if (!empty($trackData['manifest'])) {
+                            $shipment_histories[$order->id] = $trackData['manifest'];
+                        }
+
+                        $newStatus = null;
+                        if (!empty($trackData['summary']['status'])) {
+                            $newStatus = $trackData['summary']['status'];
+                        } elseif (!empty($trackData['delivery_status']['status'])) {
+                            $newStatus = $trackData['delivery_status']['status'];
+                        }
+
+                        if ($newStatus) {
+                            $order->update(['shipment_status' => $newStatus]);
+                        }
+
+                        if (!empty($trackData['details']['waybill_date'])) {
+                            $shipDate = $trackData['details']['waybill_date'];
+                            if (!empty($trackData['details']['waybill_time'])) {
+                                $shipDate .= ' ' . $trackData['details']['waybill_time'];
+                            }
+                            $order->update(['shipment_date' => $shipDate]);
+                        }
+
+                        if (!empty($trackData['delivery_status']['pod_date'])) {
+                            $podDate = $trackData['delivery_status']['pod_date'];
+                            if (!empty($trackData['delivery_status']['pod_time'])) {
+                                $podDate .= ' ' . $trackData['delivery_status']['pod_time'];
+                            }
+
+                            $order->update([
+                                'arrived_date' => $podDate,
+                                'acceptbyCustomer_status' => 'sudah'
+                            ]);
+                        }
+                    } else {
+                        return redirect()->back()->withErrors([
+                            'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
+                        ]);
+                    }
+                } catch (\Exception $e) {
                     return redirect()->back()->withErrors([
                         'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
-                    ]);
-                }
-
-                $waybills = $responseWaybills['rajaongkir']['result'];
-
-                if (!empty($waybills['manifest'])) {
-                    $shipment_histories[$order->id] = $waybills['manifest'];
-                }
-
-                if (!empty($waybills['summary']['status'])) {
-                    $order->update([
-                        'shipment_status' => $waybills['summary']['status']
-                    ]);
-                }
-
-                if (!empty($waybills['details']['waybill_date']) && !empty($waybills['details']['waybill_time'])) {
-                    $order->update([
-                        'shipment_date' => $waybills['details']['waybill_date'] . ' ' . $waybills['details']['waybill_time'],
-                    ]);
-                }
-
-                if (!empty($waybills['delivery_status']['pod_date']) && !empty($waybills['delivery_status']['pod_time'])) {
-                    $order->update([
-                        'arrived_date' => $waybills['delivery_status']['pod_date'] . ' ' . $waybills['delivery_status']['pod_time'],
-                        'acceptbyCustomer_status' => 'sudah'
                     ]);
                 }
             }
@@ -1221,41 +1204,33 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Simpan data alamat ke session
         $request->session()->put('checkout.address_id', $request->address_id);
         $request->session()->put('checkout.address', $request->address);
-        $request->session()->put('checkout.city', $request->city);
+        $request->session()->put('checkout.province_id', $request->province_id);
+        $request->session()->put('checkout.city_id', $request->city_id);
+        $request->session()->put('checkout.district_id', $request->district_id);
         $request->session()->put('checkout.note', $request->note);
 
         $validatedData = $request->validate([
-            'address_id' => 'required_without:address|integer',
-            'address' => 'required_if:address_id,0|string|nullable|max:100',
-            'destination_city' => 'required',
-            // 'province' => 'required|string|max:50',
-            // 'postal_code' => 'required|numeric',
-            'note' => 'nullable|string|max:255',
-            // 'payment_upload' => 'required|image|file|max:5000',
-            'total_poin' => 'required|numeric',
-            'reward_now' => 'numeric'
+            'address_id'   => 'required_without:address|numeric',
+            'address'      => 'required_if:address_id,0|string|nullable|max:100',
+            'district_id'  => 'required|numeric',
+            'note'         => 'nullable|string|max:255',
+            'total_poin'   => 'required|numeric',
+            'reward_now'   => 'numeric'
         ], [
-            'address_id.required_without' => 'Alamat Pengiriman wajib diisi!',
-            'address.required_if' => 'Alamat Pengiriman wajib diisi!',
-            'address.max' => 'Maksimal :max karakter!',
-            'destination_city.required' => 'Kota wajib diisi!',
-            // 'city.string' => 'Kota wajib berupa karakter!',
-            // 'city.max' => 'Maksimal :max karakter!',
-            // 'province.required' => 'Provinsi wajib diisi!',
-            // 'province.string' => 'Provinsi wajib berupa karakter!',
-            // 'province.max' => 'Maksimal :max karakter!',
-            // 'postal_code.required' => 'Kode Pos wajib diisi!',
-            // 'postal_code.numeric' => 'Kode Pos wajib berupa angka!',
-            'note.max' => 'Maksimal :max karakter!',
-            // 'payment_upload.required' => 'Mohon upload bukti pembayaran anda!',
-            // 'payment_upload.image' => 'File wajib berupa gambar!',
-            // 'payment_upload.max' => 'Maksimal ukuran gambar 5MB!',
-            'total_poin.required' => 'Total poin wajib diisi!',
-            'total_poin.numeric' => 'Total poin wajib berupa angka!',
-            'reward_now.numeric' => 'Total reward sekarang wajib berupa angka!',
+            'address_id.required_without' => 'Silakan pilih alamat pengiriman atau isi alamat baru!',
+            'address_id.numeric'          => 'Format ID alamat tidak valid!',
+            'address.required_if' => 'Detail alamat wajib diisi jika membuat alamat baru!',
+            'address.string'      => 'Alamat harus berupa teks!',
+            'address.max'         => 'Alamat tidak boleh lebih dari :max karakter!',
+            'district_id.required' => 'Mohon pilih kecamatan tujuan pengiriman!',
+            'district_id.numeric'  => 'Data kecamatan tidak valid!',
+            'note.string' => 'Catatan harus berupa teks!',
+            'note.max'    => 'Catatan tidak boleh lebih dari :max karakter!',
+            'total_poin.required' => 'Terjadi kesalahan sistem: Total poin tidak ditemukan.',
+            'total_poin.numeric'  => 'Format total poin harus berupa angka!',
+            'reward_now.numeric'  => 'Format reward saat ini harus berupa angka!',
         ]);
 
         if (!$request->courier) {
@@ -1263,7 +1238,6 @@ class OrderController extends Controller
         }
 
         $order_date = now();
-
         $cart = Cart::where('user_id', Auth::user()->id)->first();
         $cart_details = $cart->cart_detail;
         $total_weight = $cart_details->sum('weight');
@@ -1273,71 +1247,47 @@ class OrderController extends Controller
         $customer = User::where('id', Auth::user()->id)->first();
         $point = Point::first();
 
-        $responseCities = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key')
-        ])->get('https://pro.rajaongkir.com/api/city');
-        $cities = $responseCities['rajaongkir']['results'];
+        $origin_district_id = 5902;
 
-        $customer_city = null;
-        $customer_province = null;
-        $customer_postal_code = null;
-        foreach ($cities as $city) {
-            if ($city['city_id'] == $request->destination_city) {
-                $customer_city = $city['city_name'];
-                $customer_province = $city['province'];
-                $customer_postal_code = $city['postal_code'];
-                break;
-            }
+        try {
+            $responseCost = Http::withHeaders([
+                'key' => config('rajaongkir.api_key'),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ])->asForm()->post('https://rajaongkir.komerce.id/api/v1/calculate/district/domestic-cost', [
+                'origin' => $origin_district_id,
+                'destination' => $request->district_id,
+                'weight' => $total_weight,
+                'courier' => $request->courier
+            ]);
+
+            $responseBody = $responseCost->json();
+            $costs = $responseBody['data'] ?? [];
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['service_NOTAVAILABLE' => "Gagal memverifikasi ongkos kirim. Silahkan coba lagi."]);
         }
-
-        $origin_id = null;
-        foreach ($cities as $city) {
-            if ($city['city_name'] == 'Surabaya') {
-                $origin_id = $city['city_id'];
-                break;
-            }
-        }
-
-        $responseCost = Http::withHeaders([
-            'key' => config(key: 'rajaongkir.api_key'),
-        ])->post('https://pro.rajaongkir.com/api/cost', [
-            'origin' => $origin_id,
-            'originType' => 'city',
-            'destination' => $request->destination_city,
-            'destinationType' => 'city',
-            'weight' => $total_weight,
-            'courier' => $request->courier
-        ]);
-        $costs = $responseCost['rajaongkir'];
 
         $courierName = null;
         $serviceName = null;
         $shipment_estimation = null;
         $shipment_price_check = null;
-        foreach ($costs['results'] as $cost) {
+
+        foreach ($costs as $cost) {
             if ($cost['code'] == $request->courier) {
                 $courierName = $cost['name'];
-                foreach ($cost['costs'] as $index => $cost_detail) {
-                    if ($request->service == $cost_detail['service']) {
-                        $serviceName = $cost_detail['service'];
-                        foreach ($cost_detail['cost'] as $cost_value) {
-                            if ($request->service == $cost_detail['service']) {
-                                $shipment_price_check = $cost_value['value'];
-                                $shipment_estimation = $cost_value['etd'];
-                                break; // Keluar dari loop paling dalam
-                            }
-                        }
-                        break; // Keluar dari loop tengah
-                    }
+
+                if ($request->service == $cost['service']) {
+                    $serviceName = $cost['service'];
+                    $shipment_price_check = $cost['cost'];
+                    $raw_etd = $cost['etd'] ?? '';
+                    $shipment_estimation = preg_replace('/[^0-9\-]/', '', $raw_etd);
+                    break;
                 }
-                break; // Keluar dari loop terluar
             }
         }
 
-        // dd($shipment_price_check, $cart->shipment_price);
-        if (($shipment_price_check != $shipment_price) || ($shipment_price_check == null)) {
-            Session::put('costs', $costs);
-            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
+        if ($shipment_price_check === null || $shipment_price_check != $shipment_price) {
+            if ($courierName == null) $courierName = strtoupper($request->courier);
+            if ($serviceName == null) $serviceName = $request->service;
         }
 
         $shipment_service = $courierName . ', ' . $serviceName;
@@ -1363,79 +1313,99 @@ class OrderController extends Controller
             $total_price = $cart_details->sum('price') + $shipment_price + $admin_fee;
         }
 
-        // if ($request->file('payment_upload')) {
-        //     $validatedData['payment'] = $request->file('payment_upload')->store('bukti_transfer', ['disk' => 'public']);
-        // }
-
         $midtrans_order_id = rand();
-        if ($validatedData['address_id']) {
+
+        if ($validatedData['address_id'] != 0) {
             $address = Address::find($validatedData['address_id']);
+
+            $orderData = [
+                'user_id' => Auth::user()->id,
+                'address_id' => $validatedData['address_id'],
+                'midtrans_order_id' => $midtrans_order_id,
+                'order_date' => $order_date,
+                'total_price' => $total_price,
+                'total_weight' => $total_weight,
+                'payment' => 'online',
+                'shipment_service' => $shipment_service,
+                'shipment_estimation' => $shipment_estimation ?? '-',
+                'shipment_price' => $shipment_price,
+            ];
+
             if ($validatedData['note']) {
-                $order = Order::create([
-                    'user_id' => Auth::user()->id,
-                    'address_id' => $validatedData['address_id'],
-                    'midtrans_order_id' => $midtrans_order_id,
-                    'order_date' => $order_date,
-                    'total_price' => $total_price,
-                    'total_weight' => $total_weight,
-                    'payment' => 'online',
-                    'note' => $validatedData['note'],
-                    'shipment_service' => $shipment_service,
-                    'shipment_estimation' => $shipment_estimation,
-                    'shipment_price' => $shipment_price_check,
-                ]);
-            } else {
-                $order = Order::create([
-                    'user_id' => Auth::user()->id,
-                    'address_id' => $validatedData['address_id'],
-                    'midtrans_order_id' => $midtrans_order_id,
-                    'order_date' => $order_date,
-                    'total_price' => $total_price,
-                    'total_weight' => $total_weight,
-                    'payment' => 'online',
-                    'shipment_service' => $shipment_service,
-                    'shipment_estimation' => $shipment_estimation,
-                    'shipment_price' => $shipment_price_check,
-                ]);
+                $orderData['note'] = $validatedData['note'];
             }
+
+            $order = Order::create($orderData);
         } else {
+            $customer_city_name = "";
+            $customer_province_name = "";
+            $customer_postal_code = "00000";
+
+            try {
+                $responseCity = Http::withHeaders(['key' => config('rajaongkir.api_key')])
+                    ->get('https://rajaongkir.komerce.id/api/v1/destination/city/' . $request->province_id);
+
+                $citiesData = $responseCity['data'] ?? [];
+                foreach ($citiesData as $c) {
+                    if ($c['id'] == $request->city_id) {
+                        $customer_city_name = $c['name'];
+                        break;
+                    }
+                }
+
+                $responseSubDistrict = Http::withHeaders(['key' => config('rajaongkir.api_key')])
+                    ->get('https://rajaongkir.komerce.id/api/v1/destination/sub-district/' . $request->district_id);
+
+                $subDistrictsData = $responseSubDistrict['data'] ?? [];
+
+                if (!empty($subDistrictsData)) {
+                    $firstData = $subDistrictsData[0];
+                    if (isset($firstData['zip_code']) && is_numeric($firstData['zip_code'])) {
+                        $customer_postal_code = $firstData['zip_code'];
+                    }
+                }
+
+                $responseProv = Http::withHeaders(['key' => config('rajaongkir.api_key')])
+                    ->get('https://rajaongkir.komerce.id/api/v1/destination/province');
+                $provData = $responseProv['data'] ?? [];
+                foreach ($provData as $p) {
+                    if ($p['id'] == $request->province_id) {
+                        $customer_province_name = $p['name'];
+                        break;
+                    }
+                }
+            } catch (\Exception $e) {
+                $customer_city_name = "Kota ID: " . $request->city_id;
+                $customer_province_name = "Prov ID: " . $request->province_id;
+            }
+
             $address = Address::create([
                 'user_id' => Auth::user()->id,
                 'address' => $validatedData['address'],
-                'midtrans_order_id' => $midtrans_order_id,
-                'city' => $customer_city,
-                'city_id' => $request->city,
-                'province' => $customer_province,
+                'city' => $customer_city_name,
+                'city_id' => $request->city_id,
+                'province' => $customer_province_name,
                 'postal_code' => $customer_postal_code
             ]);
+
+            $orderData = [
+                'user_id' => Auth::user()->id,
+                'address_id' => $address->id,
+                'midtrans_order_id' => $midtrans_order_id,
+                'order_date' => $order_date,
+                'total_price' => $total_price,
+                'total_weight' => $total_weight,
+                'payment' => 'online',
+                'shipment_service' => $shipment_service,
+                'shipment_estimation' => $shipment_estimation ?? '-',
+                'shipment_price' => $shipment_price,
+            ];
+
             if ($validatedData['note']) {
-                $order = Order::create([
-                    'user_id' => Auth::user()->id,
-                    'address_id' => $address->id,
-                    'midtrans_order_id' => $midtrans_order_id,
-                    'order_date' => $order_date,
-                    'total_price' => $total_price,
-                    'total_weight' => $total_weight,
-                    'payment' => 'online',
-                    'note' => $validatedData['note'],
-                    'shipment_service' => $shipment_service,
-                    'shipment_estimation' => $shipment_estimation,
-                    'shipment_price' => $shipment_price_check,
-                ]);
-            } else {
-                $order = Order::create([
-                    'user_id' => Auth::user()->id,
-                    'address_id' => $address->id,
-                    'midtrans_order_id' => $midtrans_order_id,
-                    'order_date' => $order_date,
-                    'total_price' => $total_price,
-                    'total_weight' => $total_weight,
-                    'payment' => 'online',
-                    'shipment_service' => $shipment_service,
-                    'shipment_estimation' => $shipment_estimation,
-                    'shipment_price' => $shipment_price_check,
-                ]);
+                $orderData['note'] = $validatedData['note'];
             }
+
+            $order = Order::create($orderData);
         }
 
         foreach ($cart_details as $cart_detail) {
@@ -1448,45 +1418,29 @@ class OrderController extends Controller
             ]);
         }
 
-        // Mempersiapkan item_details dinamis
         $item_details = [];
         foreach ($cart_details as $cart_detail) {
             $item_details[] = [
                 'id' => $cart_detail->product_id,
                 'price' => $cart_detail->price / $cart_detail->quantity,
                 'quantity' => $cart_detail->quantity,
-                'name' => $cart_detail->product->name, // Asumsi Anda memiliki relasi produk
+                'name' => $cart_detail->product->name,
             ];
         }
 
-        // Tambahkan biaya pengiriman sebagai item terpisah
-        $item_details[] = [
-            'id' => 'SHIPPING_COST',
-            'price' => $shipment_price,
-            'quantity' => 1,
-            'name' => 'Shipping Cost'
-        ];
+        $item_details[] = ['id' => 'SHIPPING_COST', 'price' => $shipment_price, 'quantity' => 1, 'name' => 'Shipping Cost'];
+        $item_details[] = ['id' => 'ADMIN_FEE', 'price' => $admin_fee, 'quantity' => 1, 'name' => 'Admin Fee'];
 
-        // Tambahkan biaya admin sebagai item terpisah
-        $item_details[] = [
-            'id' => 'ADMIN_FEE',
-            'price' => $admin_fee,
-            'quantity' => 1,
-            'name' => 'Admin Fee'
-        ];
-
-        // Tambahkan item diskon berdasarkan poin jika ada pointStatus
         if (Session::has('pointStatus')) {
             Session::forget('pointStatus');
             $item_details[] = [
                 'id' => 'POINT_DISCOUNT',
-                'price' => -$reward_now, // Nilai diskon negatif
+                'price' => -$reward_now,
                 'quantity' => 1,
                 'name' => 'Point Discount'
             ];
         }
 
-        // Siapkan parameter untuk Midtrans
         $params = [
             'transaction_details' => [
                 'order_id' => $order->midtrans_order_id,
@@ -1526,74 +1480,80 @@ class OrderController extends Controller
                 $paymentUrl = Snap::createTransaction($params)->redirect_url;
                 return redirect($paymentUrl);
             } catch (\Exception $e) {
-                Session::put('costs', $costs);
                 return back()->withErrors([
-                    'paymentUrl_ERROR' => 'Error saat melakukan proses pembayaran! Silahkan menghubungi Lisahwan™ (082230308030)!'
+                    'paymentUrl_ERROR' => 'Error saat melakukan proses pembayaran! ' . $e->getMessage()
                 ]);
             }
         } elseif ($total_price == 0) {
-            $order->update([
-                'acceptbyAdmin_status' => 'paid'
-            ]);
-            $customer->update([
-                'reward' => $customer->reward + $validatedData['total_poin']
-            ]);
-            if ($cart) {
-                // Hapus semua sesi yang terkait dengan couponStatus
-                $activeCoupons = Session::get('activeCoupons', []);
-                foreach ($activeCoupons as $couponId) {
-                    if (Session::has('couponStatus_' . $couponId)) {
-                        Session::forget('couponStatus_' . $couponId);
-                    }
-                }
-                // Hapus sesi activeCoupons
-                if (Session::has('activeCoupons')) {
-                    Session::forget('activeCoupons');
-                }
-                // Hapus semua sesi yang terkait dengan arraycourierStatus
-                $activeCouriersStatus = Session::get('arraycourierStatus', []);
-                foreach ($activeCouriersStatus as $courierStatus) {
-                    if (Session::has('courierStatus_' . $courierStatus)) {
-                        Session::forget('courierStatus_' . $courierStatus);
-                    }
-                }
-                // Hapus sesi arraycourierStatus
-                if (Session::has('arraycourierStatus')) {
-                    Session::forget('arraycourierStatus');
-                }
-                // Mendapatkan semua sesi yang terkait dengan arraycostStatus
-                $activeCostStatus = Session::get('arraycostStatus', []);
-                // Menghapus semua sesi yang terkait dengan arraycostStatus
-                foreach ($activeCostStatus as $costStatus) {
-                    if (Session::has($costStatus)) {
-                        Session::forget($costStatus); // Hapus sesi berdasarkan kunci yang disimpan
-                    }
-                }
-                // Hapus sesi arraycostStatus
-                if (Session::has('arraycostStatus')) {
-                    Session::forget('arraycostStatus');
-                }
-                // Hapus sesi originalPrice yang mungkin ada
-                foreach ($cart->cart_detail as $cart_detail) {
-                    if (Session::has('originalPrice_' . $cart_detail->id)) {
-                        Session::forget('originalPrice_' . $cart_detail->id);
-                    }
-                }
-            }
-            if (Session::has('checkout.address_id')) {
-                Session::forget('checkout.address_id');
-            }
-            if (Session::has('checkout.address')) {
-                Session::forget('checkout.address');
-            }
-            if (Session::has('checkout.city')) {
-                Session::forget('checkout.city');
-            }
-            if (Session::has('checkout.note')) {
-                Session::forget('checkout.note');
-            }
+            $order->update(['acceptbyAdmin_status' => 'paid']);
+            $customer->update(['reward' => $customer->reward + $validatedData['total_poin']]);
+
+            $this->clearCheckoutSessions($cart);
+
             $cart->delete();
             return redirect()->route('member.orderhistory')->with('capturePayment_SUCCESSFULL', "Pesanan anda berhasil! Tinjau status pesanan anda disini!");
+        }
+    }
+
+    private function clearCheckoutSessions($cart = null)
+    {
+        if ($cart) {
+            $activeCoupons = Session::get('activeCoupons', []);
+            foreach ($activeCoupons as $couponId) {
+                if (Session::has('couponStatus_' . $couponId)) {
+                    Session::forget('couponStatus_' . $couponId);
+                }
+            }
+            if (Session::has('activeCoupons')) {
+                Session::forget('activeCoupons');
+            }
+            $activeCouriersStatus = Session::get('arraycourierStatus', []);
+            foreach ($activeCouriersStatus as $courierStatus) {
+                if (Session::has('courierStatus_' . $courierStatus)) {
+                    Session::forget('courierStatus_' . $courierStatus);
+                }
+            }
+            if (Session::has('arraycourierStatus')) {
+                Session::forget('arraycourierStatus');
+            }
+            $activeCostStatus = Session::get('arraycostStatus', []);
+            foreach ($activeCostStatus as $costStatus) {
+                if (Session::has($costStatus)) {
+                    Session::forget($costStatus);
+                }
+            }
+            if (Session::has('arraycostStatus')) {
+                Session::forget('arraycostStatus');
+            }
+            foreach ($cart->cart_detail as $cart_detail) {
+                if (Session::has('originalPrice_' . $cart_detail->id)) {
+                    Session::forget('originalPrice_' . $cart_detail->id);
+                }
+            }
+        }
+        if (Session::has('checkout.address_id')) {
+            Session::forget('checkout.address_id');
+        }
+        if (Session::has('checkout.address')) {
+            Session::forget('checkout.address');
+        }
+        if (Session::has('checkout.city')) {
+            Session::forget('checkout.city');
+        }
+        if (Session::has('checkout.city_id')) {
+            Session::forget('checkout.city_id');
+        }
+        if (Session::has('checkout.province_id')) {
+            Session::forget('checkout.province_id');
+        }
+        if (Session::has('checkout.district_id')) {
+            Session::forget('checkout.district_id');
+        }
+        if (Session::has('checkout.note')) {
+            Session::forget('checkout.note');
+        }
+        if (Session::has('pointStatus')) {
+            Session::forget('pointStatus');
         }
     }
 

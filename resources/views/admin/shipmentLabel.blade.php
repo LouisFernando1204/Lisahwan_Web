@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Label Pengiriman</title>
-    <link rel="icon" href="/images/lisahwan_logo.png">
+    <link rel="icon" href="{{ public_path('images/lisahwan_logo.png') }}">
 </head>
 
 <body style="font-family: 'Montserrat', sans-serif; margin: 0; padding: 0;" width="100%">
@@ -85,7 +85,7 @@
         <div style="text-align: center; border-top: 1px solid #000; padding-top: 2mm; margin-top: 3mm;">
             <p style="margin: 0; font-size: 8pt; text-align: center;"><strong>Terima kasih sudah
                     belanja!</strong></p>
-            <img src="{{ url('/images/lisahwan_text.png') }}" alt="Lisahwan"
+            <img src="{{ public_path('images/lisahwan_text.png') }}" alt="Lisahwan"
                 style="filter: contrast(150%) drop-shadow(2px 2px 2px black);" width="100px">
         </div>
     </div>

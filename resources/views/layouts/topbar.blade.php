@@ -93,12 +93,21 @@
                             @if (!empty($carts))
                                 @foreach ($carts as $cart)
                                     <div class="flex flex-row items-center w-full">
-                                        @if (strlen($cart->product->image) > 30)
+                                        {{-- @if (strlen($cart->product->image) > 30)
                                             <img class="h-40 w-44 object-cover object-bottom rounded-lg drop-shadow-md"
                                                 src="{{ asset('storage/' . $cart->product->image) }}"
                                                 alt="{{ $cart->product->image }}" />
                                         @else
                                             <img class="h-40 w-44 object-cover object-bottom rounded-lg drop-shadow-md"
+                                                src="/images/fotoproduk/{{ $cart->product->image }}"
+                                                alt="{{ $cart->product->name }}">
+                                        @endif --}}
+                                        @if (strlen($cart->product->image) > 30)
+                                            <img class="w-32 h-32 sm:w-40 sm:h-40 object-cover object-center rounded-lg drop-shadow-md shrink-0"
+                                                src="{{ asset('storage/' . $cart->product->image) }}"
+                                                alt="{{ $cart->product->image }}" />
+                                        @else
+                                            <img class="w-32 h-32 sm:w-40 sm:h-40 object-cover object-center rounded-lg drop-shadow-md shrink-0"
                                                 src="/images/fotoproduk/{{ $cart->product->image }}"
                                                 alt="{{ $cart->product->name }}">
                                         @endif

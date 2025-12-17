@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Struk</title>
-    <link rel="icon" href="/images/lisahwan_logo.png">
+    <link rel="icon" href="{{ public_path('images/lisahwan_logo.png') }}">
 </head>
 
 <body style="font-family: 'Montserrat', sans-serif;">
@@ -15,7 +15,7 @@
     @endphp
     <div style="display: flex; justify-content: center; align-items: center; padding-right: 1rem;">
         <div style="width: 100%; border-radius: 0.375rem; padding-left: 1rem; padding-right: 1rem;">
-            <img src="/images/lisahwan_text.png" alt="Lisahwan"
+            <img src="{{ public_path('images/lisahwan_text.png') }}" alt="Lisahwan"
                 style="filter: contrast(150%) drop-shadow(2px 2px 2px black);">
             <div style="margin-top: 0.5rem; padding-bottom: 0.5rem;">
                 <p style="margin: 0rem; font-size: 0.75rem; color: black; text-align: center;">Jalan Jemur Andayani XIII

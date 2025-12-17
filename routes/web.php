@@ -159,6 +159,10 @@ Route::group([
     Route::get('/carts/edit/{product_id}', [MemberCartController::class, 'edit'])->name('carts.edit'); // EDIT CART (CHECKED)
     Route::patch('/carts/update/{product_id}', [MemberCartController::class, 'update'])->name('carts.update'); // UPDATE CART (CHECKED)
 
+    // Route untuk AJAX RajaOngkir V2
+    Route::get('/get-cities/{province_id}', [MemberOrderController::class, 'getCities'])->name('ajax.getCities');
+    Route::get('/get-districts/{city_id}', [MemberOrderController::class, 'getDistricts'])->name('ajax.getDistricts');
+
     Route::get('/checkout', [MemberOrderController::class, 'index'])->name('checkout'); // CHECKOUT PAGE (CHECKED)
     Route::post('/checkout/payment', [MemberOrderController::class, 'store'])->name('checkout.store'); // CREATE ORDER (CHECKED)
     Route::get('/orderhistory', [MemberOrderController::class, 'show_orderhistory'])->name('orderhistory'); // ORDER HISTORY PAGE (CHECKED)

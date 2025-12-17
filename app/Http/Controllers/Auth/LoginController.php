@@ -100,8 +100,20 @@ class LoginController extends Controller
         if (Session::has('checkout.city')) {
             Session::forget('checkout.city');
         }
+        if (Session::has('checkout.city_id')) {
+            Session::forget('checkout.city_id');
+        }
+        if (Session::has('checkout.province_id')) {
+            Session::forget('checkout.province_id');
+        }
+        if (Session::has('checkout.district_id')) {
+            Session::forget('checkout.district_id');
+        }
         if (Session::has('checkout.note')) {
             Session::forget('checkout.note');
+        }
+        if (Session::has('pointStatus')) {
+            Session::forget('pointStatus');
         }
 
         dd(Session::all());

@@ -122,9 +122,9 @@
                 </div>
             </div>
         @enderror
-        @error('cityForgotten_error')
+        @error('districtForgotten_error')
             <div data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('cityForgotten_error') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
+                class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('districtForgotten_error') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
                 role="alert">
                 <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor" viewBox="0 0 20 20">
@@ -152,9 +152,9 @@
                 </div>
             </div>
         @enderror
-        @error('couriercityForgotten_error')
+        @error('courierDistrictForgotten_error')
             <div data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('couriercityForgotten_error') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
+                class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('courierDistrictForgotten_error') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
                 role="alert">
                 <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor" viewBox="0 0 20 20">
@@ -289,8 +289,12 @@
                         <input type="hidden" value="{{ $reward_now }}" name="reward_now">
                         <input type="hidden" id="courier_hidden" value="" name="courier">
                         <input type="hidden" id="service_hidden" value="" name="service">
-                        <input type="hidden" id="destination_city" name="destination_city"
-                            value="{{ old('city', session('checkout.city')) }}">
+                        <input type="hidden" id="final_province_id" name="province_id"
+                            value="{{ old('province_id', session('checkout.province_id')) }}">
+                        <input type="hidden" id="final_city_id" name="city_id"
+                            value="{{ old('city_id', session('checkout.city_id')) }}">
+                        <input type="hidden" id="final_district_id" name="district_id"
+                            value="{{ old('district_id', session('checkout.district_id')) }}">
                         <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                             class="grid gap-4 sm:grid-cols-2 sm:gap-6">
                             <div class="sm:col-span-2">
@@ -325,63 +329,58 @@
                                 </div>
                             </div>
                             <div class="w-full">
-                                {{-- <label data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    for="city" class="block mb-2 text-sm font-semibold text-gray-900">Kota</label>
-                                <input data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    type="text" name="city" id="city"
-                                    value="{{ old('city', session('checkout.city')) }}"
-                                    class="{{ $errors->has('city') ? 'bg-red-100 border-red-400 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500' : 'bg-white border-yellow-500 text-gray-900 placeholder-gray-400  focus:ring-yellow-500 focus:border-yellow-500' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3"
-                                    placeholder="(Contoh: Surabaya)">
-                                @error('city')
-                                    <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                        class="mt-2 text-sm text-red-500"><span class="font-medium">{{ $message }}</p>
-                                @enderror --}}
-
                                 <label data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    for="city" class="block mb-2 text-sm font-semibold text-gray-900">Kota</label>
+                                    for="province_id"
+                                    class="block mb-2 text-sm font-semibold text-gray-900">Provinsi</label>
                                 <select data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    id="city" name="city"
-                                    class="{{ $errors->has('destination_city') ? 'bg-red-100 border-red-400 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500' : 'bg-white border-yellow-500 text-gray-900 placeholder-gray-400  focus:ring-yellow-500 focus:border-yellow-500' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3">
-                                    <option value="">Pilih kota</option>
-                                    @foreach ($cities as $city)
-                                        <option value="{{ $city['city_id'] }}"
-                                            {{ old('city', session('checkout.city')) == $city['city_id'] ? 'selected' : '' }}>
-                                            {{ $city['city_name'] }}
+                                    id="province_id" name="province_id"
+                                    class="{{ $errors->has('province_id') ? 'bg-red-100 border-red-400 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500' : 'bg-white border-yellow-500 text-gray-900 placeholder-gray-400 focus:ring-yellow-500 focus:border-yellow-500' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3">
+                                    <option value="">Pilih Provinsi</option>
+                                    @foreach ($provinces as $province)
+                                        <option value="{{ $province['id'] }}"
+                                            {{ old('province_id', session('checkout.province_id')) == $province['id'] ? 'selected' : '' }}>
+                                            {{ $province['name'] }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('city')
+                                @error('province_id')
                                     <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                        class="mt-2 text-sm text-red-500"><span class="font-medium">{{ $message }}</p>
+                                        class="mt-2 text-sm text-red-500"><span
+                                            class="font-medium">{{ $message }}</span></p>
                                 @enderror
                             </div>
-                            {{-- <div class="w-full">
+
+                            <div class="w-full">
                                 <label data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    for="province" class="block mb-2 text-sm font-semibold text-gray-900">Provinsi</label>
-                                <input data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    type="text" name="province" id="province"
-                                    value="{{ old('province', session('checkout.province')) }}"
-                                    class="{{ $errors->has('province') ? 'bg-red-100 border-red-400 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500' : 'bg-white border-yellow-500 text-gray-900 placeholder-gray-400  focus:ring-yellow-500 focus:border-yellow-500' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3"
-                                    placeholder="(Contoh: Jawa Timur)">
-                                @error('province')
+                                    for="city_id"
+                                    class="block mb-2 text-sm font-semibold text-gray-900">Kota/Kabupaten</label>
+                                <select data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
+                                    id="city_id" name="city_id" disabled
+                                    class="{{ $errors->has('city_id') ? 'bg-red-100 border-red-400 text-red-500' : 'bg-white border-yellow-500 text-gray-900 focus:ring-yellow-500 focus:border-yellow-500 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3">
+                                    <option value="">Pilih Provinsi Terlebih Dahulu</option>
+                                </select>
+                                @error('city_id')
                                     <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                        class="mt-2 text-sm text-red-500"><span class="font-medium">{{ $message }}</p>
+                                        class="mt-2 text-sm text-red-500"><span
+                                            class="font-medium">{{ $message }}</span></p>
                                 @enderror
                             </div>
-                            <div>
+
+                            <div class="w-full">
                                 <label data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    for="postal_code" class="block mb-2 text-sm font-semibold text-gray-900">Kode
-                                    Pos</label>
-                                <input data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                    type="text" name="postal_code" id="postal_code"
-                                    value="{{ old('postal_code', session('checkout.postal_code')) }}"
-                                    class="{{ $errors->has('postal_code') ? 'bg-red-100 border-red-400 text-red-500 placeholder-red-700 focus:ring-red-500 focus:border-red-500' : 'bg-white border-yellow-500 text-gray-900 placeholder-gray-400  focus:ring-yellow-500 focus:border-yellow-500' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3"
-                                    placeholder="(Contoh: 60237)">
-                                @error('postal_code')
+                                    for="district_id"
+                                    class="block mb-2 text-sm font-semibold text-gray-900">Kecamatan</label>
+                                <select data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
+                                    id="district_id" name="district_id" disabled
+                                    class="{{ $errors->has('district_id') ? 'bg-red-100 border-red-400 text-red-500' : 'bg-white border-yellow-500 text-gray-900 focus:ring-yellow-500 focus:border-yellow-500 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed' }} rounded-lg border-1 text-sm block w-full p-2.5 mt-3">
+                                    <option value="">Pilih Kota Terlebih Dahulu</option>
+                                </select>
+                                @error('district_id')
                                     <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                                        class="mt-2 text-sm text-red-500"><span class="font-medium">{{ $message }}</p>
+                                        class="mt-2 text-sm text-red-500"><span
+                                            class="font-medium">{{ $message }}</span></p>
                                 @enderror
-                            </div> --}}
+                            </div>
                             <div>
                                 <label data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                                     for="note" class="block mb-2 text-sm font-semibold text-gray-900">Catatan</label>
@@ -496,8 +495,12 @@
                             value="{{ old('address_id', session('checkout.address_id')) }}">
                         <input type="hidden" id="destination_address" name="address"
                             value="{{ old('address', session('checkout.address')) }}">
-                        <input type="hidden" id="destination_city_1" name="city"
-                            value="{{ old('city', session('checkout.city')) }}">
+                        <input type="hidden" id="destination_province" name="province_id"
+                            value="{{ old('province_id', session('checkout.province_id')) }}">
+                        <input type="hidden" id="destination_city" name="city_id"
+                            value="{{ old('city_id', session('checkout.city_id')) }}">
+                        <input type="hidden" id="destination_district" name="district_id"
+                            value="{{ old('district_id', session('checkout.district_id')) }}">
                         <input type="hidden" id="destination_note" name="note"
                             value="{{ old('note', session('checkout.note')) }}">
                         <div class="w-full">
@@ -546,62 +549,65 @@
                         {{-- @dd(session('costs')) --}}
                         <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                             class="mt-3 w-full bg-gray-900 divide-y divide-gray-100 rounded-lg shadow">
-                            <ul class="p-2 space-y-1 text-sm text-yellow-500" aria-labelledby="dropdownToggleButton">
-                                @foreach (session('costs')['results'] as $costs)
-                                    @foreach ($costs['costs'] as $index => $cost)
-                                        @php
-                                            $cityName = session('costs')['destination_details']['city_id'];
-                                            $sessionKey =
-                                                'costStatus_' . $index . '_' . $cityName . '_' . $costs['code'];
-                                            $costStatus = Session::get($sessionKey);
-                                            // dd($costStatus);
-                                        @endphp
-                                        <form id="checkboxCostForm_{{ $index }}"
-                                            action="{{ route('member.pilihOngkir', $index) }}" method="POST"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            <input type="hidden" id="destination_address_id_{{ $index }}"
-                                                name="address_id"
-                                                value="{{ old('address_id', session('checkout.address_id')) }}">
-                                            <input type="hidden" id="destination_address_{{ $index }}"
-                                                name="address" value="{{ old('address', session('checkout.address')) }}">
-                                            <input type="hidden" id="destination_city_{{ $index }}"
-                                                name="city" value="{{ old('city', session('checkout.city')) }}">
-                                            <input type="hidden" id="destination_note_{{ $index }}"
-                                                name="note" value="{{ old('note', session('checkout.note')) }}">
-                                            <input type="hidden" id="courier" name="courier"
-                                                value="{{ $costs['code'] }}">
-                                            <li>
-                                                <div
-                                                    class="flex flex-col  space-y-2 md:space-y-0 md:flex-row justify-between items-center p-2 rounded hover:bg-gray-800 w-full">
-                                                    <label class="inline-flex items-center w-full cursor-pointer">
-                                                        <input type="checkbox"
-                                                            id="autoSubmitCheckboxCost_{{ $index }}"
-                                                            value="{{ $cost['service'] }}"
-                                                            {{ isset($costStatus) ? 'checked' : '' }}
-                                                            class="cost-checkbox sr-only peer">
-                                                        <div
-                                                            class="relative w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-500 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-500">
-                                                        </div>
-                                                        <span
-                                                            class="ms-3 text-sm font-medium text-yellow-500">{{ $cost['service'] }}
-                                                            ({{ $cost['description'] }})
-                                                        </span>
-                                                    </label>
+                            <ul class="p-2 space-y-1 text-sm text-yellow-500">
+                                @foreach (session('costs') as $index => $cost)
+                                    @php
+                                        $destinationId = session('checkout.district_id');
+                                        $courierCode = $cost['code'];
+                                        $sessionKey =
+                                            'costStatus_' . $index . '_' . $destinationId . '_' . $courierCode;
+                                        $isChecked = Session::has($sessionKey);
+                                    @endphp
+
+                                    <form id="checkboxCostForm_{{ $index }}"
+                                        action="{{ route('member.pilihOngkir', $index) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" id="destination_address_id_{{ $index }}"
+                                            name="address_id" value="{{ session('checkout.address_id') }}">
+                                        <input type="hidden" id="destination_address_{{ $index }}"
+                                            name="address" value="{{ session('checkout.address') }}">
+                                        <input type="hidden" id="destination_province_{{ $index }}"
+                                            name="province_id" value="{{ session('checkout.province_id') }}">
+                                        <input type="hidden" id="destination_city_{{ $index }}" name="city_id"
+                                            value="{{ session('checkout.city_id') }}">
+                                        <input type="hidden" id="destination_district_{{ $index }}"
+                                            name="district_id" value="{{ session('checkout.district_id') }}">
+                                        <input type="hidden" name="courier" value="{{ $courierCode }}">
+                                        <input type="hidden" id="destination_note_{{ $index }}" name="note"
+                                            value="{{ session('checkout.note') }}">
+                                        <li>
+                                            <div
+                                                class="flex flex-col md:flex-row justify-between items-center p-2 rounded hover:bg-gray-800 w-full md:space-x-4">
+                                                <label class="inline-flex items-center cursor-pointer w-full md:w-auto">
+                                                    <input type="checkbox"
+                                                        id="autoSubmitCheckboxCost_{{ $index }}"
+                                                        value="{{ $cost['service'] }}" {{ $isChecked ? 'checked' : '' }}
+                                                        class="cost-checkbox sr-only peer">
                                                     <div
-                                                        class="w-full flex flex-row space-x-2 items-center lg:justify-center">
-                                                        @foreach ($cost['cost'] as $cost_detail)
-                                                            <span class="text-yellow-500 text-sm font-semibold">Rp.
-                                                                {{ number_format($cost_detail['value'], 0, ',', '.') }}</span>
-                                                            <span class="w-2 h-2 bg-gray-700 rounded-full"></span>
-                                                            <span class="text-yellow-500 text-sm font-semibold">(Estimasi
-                                                                {{ $cost_detail['etd'] }}{{ stripos($cost_detail['etd'], 'hari') === false ? ' hari' : '' }})</span>
-                                                        @endforeach
+                                                        class="relative w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-yellow-500 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all shrink-0">
                                                     </div>
+                                                    <span class="ms-3 text-xs sm:text-sm font-medium text-yellow-500">
+                                                        {{ $cost['name'] }} - {{ $cost['service'] }}
+                                                        <span
+                                                            class="text-xs text-gray-400 hidden sm:inline">({{ $cost['description'] }})</span>
+                                                    </span>
+                                                </label>
+                                                <div
+                                                    class="flex flex-row items-center justify-between md:justify-end w-full md:w-auto mt-2 md:mt-0 space-x-2 pl-12 md:pl-0">
+                                                    <span
+                                                        class="text-yellow-500 text-xs sm:text-sm font-bold whitespace-nowrap">
+                                                        Rp. {{ number_format($cost['cost'], 0, ',', '.') }}
+                                                    </span>
+                                                    <span class="w-1.5 h-1.5 bg-gray-600 rounded-full shrink-0"></span>
+                                                    <span
+                                                        class="text-yellow-500 text-xs sm:text-sm font-medium whitespace-nowrap">
+                                                        (Estimasi {{ $cost['etd'] }}
+                                                        {{ stripos($cost['etd'], 'hari') === false ? 'hari' : '' }})
+                                                    </span>
                                                 </div>
-                                            </li>
-                                        </form>
-                                    @endforeach
+                                            </div>
+                                        </li>
+                                    </form>
                                 @endforeach
                             </ul>
                         </div>
@@ -614,12 +620,12 @@
                                 value="{{ old('address_id', session('checkout.address_id')) }}">
                             <input type="hidden" id="addressHidden" name="address"
                                 value="{{ old('address', session('checkout.address')) }}">
-                            <input type="hidden" id="cityHidden" name="city"
-                                value="{{ old('city', session('checkout.city')) }}">
-                            {{-- <input type="hidden" id="provinceHidden" name="province"
-                                value="{{ old('province', session('checkout.province')) }}">
-                            <input type="hidden" id="postalCodeHidden" name="postal_code"
-                                value="{{ old('postal_code', session('checkout.postal_code')) }}"> --}}
+                            <input type="hidden" id="provinceHidden" name="province_id"
+                                value="{{ old('province_id', session('checkout.province_id')) }}">
+                            <input type="hidden" id="cityHidden" name="city_id"
+                                value="{{ old('city_id', session('checkout.city_id')) }}">
+                            <input type="hidden" id="districtHidden" name="district_id"
+                                value="{{ old('district_id', session('checkout.district_id')) }}">
                             <input type="hidden" id="noteHidden" name="note"
                                 value="{{ old('note', session('checkout.note')) }}">
                             <div class="w-full">
@@ -695,40 +701,48 @@
                                                 <input type="hidden" id="addressHidden_{{ $coupon->coupon->id }}"
                                                     name="address"
                                                     value="{{ old('address', session('checkout.address')) }}">
+                                                <input type="hidden" id="provinceHidden_{{ $coupon->coupon->id }}"
+                                                    name="province_id"
+                                                    value="{{ old('province_id', session('checkout.province_id')) }}">
                                                 <input type="hidden" id="cityHidden_{{ $coupon->coupon->id }}"
-                                                    name="city" value="{{ old('city', session('checkout.city')) }}">
-                                                {{-- <input type="hidden" id="provinceHidden_{{ $coupon->coupon->id }}"
-                                                    name="province"
-                                                    value="{{ old('province', session('checkout.province')) }}">
-                                                <input type="hidden" id="postalCodeHidden_{{ $coupon->coupon->id }}"
-                                                    name="postal_code"
-                                                    value="{{ old('postal_code', session('checkout.postal_code')) }}"> --}}
+                                                    name="city_id"
+                                                    value="{{ old('city_id', session('checkout.city_id')) }}">
+                                                <input type="hidden" id="districtHidden_{{ $coupon->coupon->id }}"
+                                                    name="district_id"
+                                                    value="{{ old('district_id', session('checkout.district_id')) }}">
                                                 <input type="hidden" id="noteHidden_{{ $coupon->coupon->id }}"
                                                     name="note" value="{{ old('note', session('checkout.note')) }}">
                                                 <li>
                                                     <div
-                                                        class="flex flex-col space-y-2 md:space-y-0 md:flex-row justify-between items-center p-2 rounded hover:bg-gray-800 w-full">
-                                                        <label class="inline-flex items-center w-full cursor-pointer">
+                                                        class="flex flex-col md:flex-row justify-between items-center p-2 rounded hover:bg-gray-800 w-full md:space-x-4">
+                                                        <label
+                                                            class="inline-flex items-center cursor-pointer w-full md:w-auto">
                                                             <input type="checkbox"
                                                                 id="autoSubmitCheckbox_{{ $coupon->coupon->id }}"
-                                                                value="" {{ isset($couponStatus) ? 'checked' : '' }}
+                                                                value=""
+                                                                {{ isset($couponStatus) ? 'checked' : '' }}
                                                                 class="coupon-checkbox sr-only peer">
                                                             <div
-                                                                class="relative w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-500 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-500">
+                                                                class="relative w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-500 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-500 shrink-0">
                                                             </div>
                                                             <span
-                                                                class="ms-3 text-xs sm:text-sm font-medium text-yellow-500">{{ $coupon->coupon->title }}</span>
+                                                                class="ms-3 text-xs sm:text-sm font-medium text-yellow-500 truncate">
+                                                                {{ $coupon->coupon->title }}
+                                                            </span>
                                                         </label>
-                                                        <div class="w-full flex flex-row items-center lg:justify-center">
+                                                        <div
+                                                            class="flex flex-row items-center justify-between md:justify-end w-full md:w-auto mt-2 md:mt-0 space-x-2 pl-12 md:pl-0">
                                                             <span
-                                                                class="text-yellow-500 text-xs sm:text-sm font-semibold">{{ $coupon->quantity }}
-                                                                kupon</span>
+                                                                class="text-yellow-500 text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                                                {{ $coupon->quantity }} kupon
+                                                            </span>
                                                             <span
-                                                                class="w-2 h-2 bg-gray-700 rounded-full mx-1 md:mx-0 lg:mx-1"></span>
+                                                                class="w-1.5 h-1.5 bg-gray-600 rounded-full shrink-0"></span>
                                                             <span
-                                                                class="text-yellow-500 text-xs sm:text-sm font-semibold">(Berlaku
-                                                                sampai
-                                                                {{ date('d F Y', strtotime($coupon->coupon->ending_time)) }})</span>
+                                                                class="text-yellow-500 text-xs sm:text-sm font-semibold whitespace-nowrap">
+                                                                (Berlaku s/d
+                                                                {{ date('d M Y', strtotime($coupon->coupon->ending_time)) }})
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -764,12 +778,23 @@
                                 @foreach ($carts as $cart)
                                     <div data-aos="fade-up" data-aos-anchor-placement="top-bottom"
                                         data-aos-duration="800" class="flex flex-row items-center w-full">
-                                        @if (strlen($cart->product->image) > 30)
+                                        {{-- @if (strlen($cart->product->image) > 30)
                                             <img class="h-40 w-44 object-cover object-bottom rounded-lg drop-shadow-md"
                                                 src="{{ asset('storage/' . $cart->product->image) }}"
                                                 alt="{{ $cart->product->image }}" />
                                         @else
                                             <img class="h-40 w-44 object-cover object-bottom rounded-lg drop-shadow-md"
+                                                src="/images/fotoproduk/{{ $cart->product->image }}"
+                                                alt="{{ $cart->product->name }}">
+                                        @endif --}}
+                                        @if (strlen($cart->product->image) > 30)
+                                            {{-- Ubah class di bawah ini --}}
+                                            <img class="w-32 h-32 sm:w-40 sm:h-40 object-cover object-center rounded-lg drop-shadow-md shrink-0"
+                                                src="{{ asset('storage/' . $cart->product->image) }}"
+                                                alt="{{ $cart->product->image }}" />
+                                        @else
+                                            {{-- Ubah class di bawah ini --}}
+                                            <img class="w-32 h-32 sm:w-40 sm:h-40 object-cover object-center rounded-lg drop-shadow-md shrink-0"
                                                 src="/images/fotoproduk/{{ $cart->product->image }}"
                                                 alt="{{ $cart->product->name }}">
                                         @endif
@@ -820,8 +845,9 @@
                                                         method="POST">
                                                         @method('delete')
                                                         @csrf
-                                                        <input type="hidden" id="destination_city_2" value=""
-                                                            name="city">
+                                                        <input type="hidden"
+                                                            id="destination_district_delete_{{ $cart->id }}"
+                                                            name="district_id" value="">
                                                         <button type="submit"
                                                             class="cursor-pointer text-xs sm:text-sm font-medium text-yellow-500 hover:text-yellow-600"
                                                             onclick="return confirm('Apakah anda ingin menghapus pesanan ini?')">
@@ -939,12 +965,12 @@
                                         value="{{ old('address_id', session('checkout.address_id')) }}">
                                     <input type="hidden" id="addressHide" name="address"
                                         value="{{ old('address', session('checkout.address')) }}">
-                                    <input type="hidden" id="cityHide" name="city"
-                                        value="{{ old('city', session('checkout.city')) }}">
-                                    {{-- <input type="hidden" id="provinceHide" name="province"
-                                        value="{{ old('province', session('checkout.province')) }}">
-                                    <input type="hidden" id="postalCodeHide" name="postal_code"
-                                        value="{{ old('postal_code', session('checkout.postal_code')) }}"> --}}
+                                    <input type="hidden" id="provinceHide" name="province_id"
+                                        value="{{ old('province_id', session('checkout.province_id')) }}">
+                                    <input type="hidden" id="cityHide" name="city_id"
+                                        value="{{ old('city_id', session('checkout.city_id')) }}">
+                                    <input type="hidden" id="districtHide" name="district_id"
+                                        value="{{ old('district_id', session('checkout.district_id')) }}">
                                     <input type="hidden" id="noteHide" name="note"
                                         value="{{ old('note', session('checkout.note')) }}">
                                     <label
@@ -1125,282 +1151,290 @@
     </div>
     <script language="javascript">
         $(document).ready(function() {
-            function updateCourierHidden() {
-                // Ambil nilai dari checkbox yang dicheck
-                var checkedValue = $('.courier-checkbox:checked').val();
 
-                // Set nilai input hidden dengan nilai dari checkbox yang dicheck
-                $('#courier_hidden').val(checkedValue ||
-                    ''); // Jika tidak ada yang dicheck, set sebagai string kosong
-                // console.log("0: " + $('#courier_hidden').val());
-            }
+            // =================================================================
+            // 1. DEFINISI VARIABEL SESSION (DARI LARAVEL KE JS)
+            // =================================================================
+            var savedProvinceId = "{{ old('province_id', session('checkout.province_id')) }}";
+            var savedCityId = "{{ old('city_id', session('checkout.city_id')) }}";
+            var savedDistrictId = "{{ old('district_id', session('checkout.district_id')) }}";
 
-            // Panggil fungsi updateCourierHidden saat halaman dimuat, jika ada checkbox yang sudah dicheck
-            updateCourierHidden();
-        });
+            // =================================================================
+            // 2. FUNGSI AJAX YANG DIPERBARUI (BISA AUTO-SELECT)
+            // =================================================================
 
-        $(document).ready(function() {
-            function updateCostHidden() {
-                var checkedValue = $('.cost-checkbox:checked').val();
-                $('#service_hidden').val(checkedValue || '');
-            }
+            // Fungsi Load Kota
+            function loadCities(provinceId, autoSelectCityId = null) {
+                if (!provinceId) return;
 
-            updateCostHidden();
-        });
+                // URL Fix (Http/Https Mixed Content)
+                var urlCities = "{{ route('member.ajax.getCities', ':province_id') }}".replace('http://',
+                    'https://');
+                urlCities = urlCities.replace(':province_id', provinceId);
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui input berdasarkan pilihan address_id
-            function updateAddressFields() {
-                var selectedOption = $('#address_id').find('option:selected');
-                var city = selectedOption.data('city');
-                var cityValue = $('#city').val();
-                // var province = selectedOption.data('province');
-                // var postal_code = selectedOption.data('postal_code');
+                // Reset Dropdown Kota & Kecamatan
+                $('#city_id').empty().append('<option value="">Sedang memuat...</option>').prop('disabled', true);
+                $('#district_id').empty().append('<option value="">Pilih Kota Terlebih Dahulu</option>').prop(
+                    'disabled', true);
 
-                if ($('#address_id').val() == '0') {
-                    $('#new_address_container').show();
-                    $('#city').prop('disabled', false).val(cityValue);
-                    // $('#province').val('');
-                    // $('#postal_code').val('');
-                } else {
-                    $('#new_address_container input').val("");
-                    $('#new_address_container').hide();
-                    $('#city').val(city).prop('disabled', true);
-                    // $('#province').val(province);
-                    // $('#postal_code').val(postal_code);
-                }
+                $.ajax({
+                    url: urlCities,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#city_id').empty().append('<option value="">Pilih Kota/Kabupaten</option>');
 
-                // Perbarui nilai input tersembunyi dengan nilai kota yang dipilih
-                $('#destination_city').val($('#city').val());
+                        $.each(data, function(key, city) {
+                            var isSelected = (autoSelectCityId && city.id == autoSelectCityId) ?
+                                'selected' : '';
+                            $('#city_id').append('<option value="' + city.id + '" ' +
+                                isSelected + '>' + city.name + '</option>');
+                        });
 
-                // Perbarui nilai input tersembunyi dengan nilai kota yang dipilih
-                var cityValue = $('#city').val();
-                $('input[id^="destination_city_"]').each(function() {
-                    $(this).val(cityValue);
+                        $('#city_id').prop('disabled', false);
+
+                        // --- CHAINING: Jika Kota terpilih otomatis, langsung load Kecamatan ---
+                        if (autoSelectCityId) {
+                            loadDistricts(autoSelectCityId, savedDistrictId);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching cities:", error);
+                        $('#city_id').empty().append('<option value="">Gagal memuat kota</option>');
+                    }
                 });
             }
 
-            // Panggil fungsi saat dokumen siap
-            updateAddressFields();
+            // Fungsi Load Kecamatan
+            function loadDistricts(cityId, autoSelectDistrictId = null) {
+                if (!cityId) return;
 
-            // Panggil fungsi saat address_id berubah
+                var urlDistricts = "{{ route('member.ajax.getDistricts', ':city_id') }}".replace('http://',
+                    'https://');
+                urlDistricts = urlDistricts.replace(':city_id', cityId);
+
+                $('#district_id').empty().append('<option value="">Sedang memuat...</option>').prop('disabled',
+                    true);
+
+                $.ajax({
+                    url: urlDistricts,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#district_id').empty().append('<option value="">Pilih Kecamatan</option>');
+
+                        $.each(data, function(key, district) {
+                            var isSelected = (autoSelectDistrictId && district.id ==
+                                autoSelectDistrictId) ? 'selected' : '';
+                            $('#district_id').append('<option value="' + district.id + '" ' +
+                                isSelected + '>' + district.name + '</option>');
+                        });
+
+                        $('#district_id').prop('disabled', false);
+
+                        // Trigger change agar input hidden terisi setelah auto-select
+                        if (autoSelectDistrictId) {
+                            $('#district_id').trigger('change');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching districts:", error);
+                        $('#district_id').empty().append(
+                            '<option value="">Gagal memuat kecamatan</option>');
+                    }
+                });
+            }
+
+            // =================================================================
+            // 3. EVENT LISTENERS (INTERAKSI USER)
+            // =================================================================
+
+            // --- [BARU] LOGIC TAMBAH ALAMAT ---
             $('#address_id').on('change', function() {
-                updateAddressFields();
+                if ($(this).val() == '0') {
+                    $('#new_address_container').slideDown();
+                } else {
+                    $('#new_address_container').slideUp();
+                }
             });
-        });
 
-        // buat display input file image preview
-        function displayImagePreview(input) {
-            var preview = $('#imagePreview');
-
-            // Remove existing image
-            preview.empty();
-
-            // Display newly uploaded image
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var img = $('<img>').attr('src', e.target.result).addClass(
-                        'w-6/12 mx-auto rounded-lg object-cover');
-                    preview.append(img);
-                };
-                reader.readAsDataURL(input.files[0]);
+            // Cek kondisi awal (untuk reload validation error)
+            if ($('#address_id').val() == '0') {
+                $('#new_address_container').show();
+            } else {
+                $('#new_address_container').hide();
             }
-        }
+            // ----------------------------------
 
-        $(document).ready(function() {
-            // Mendengarkan perubahan pada semua checkbox dengan id yang dimulai dengan 'autoSubmitCheckbox_'
-            $('[id^=autoSubmitCheckbox_]').change(function() {
-                // Mengambil id form dari checkbox yang berubah
-                var formId = $(this).attr('id').replace('autoSubmitCheckbox_', 'checkboxForm_');
-
-                // Tampilkan loading sebelum submit
-                $('#loadingOverlay').css('display', 'flex');
-
-                // Disable checkbox yang berubah
-                $(this).prop('disabled', true);
-
-                // Set status loading di sessionStorage
-                sessionStorage.setItem('loadingDisplayed', true);
-
-                // Melakukan submit form yang sesuai dengan id
-                $('#' + formId).submit();
+            // User ganti Provinsi -> Load Kota
+            $('#province_id').on('change', function() {
+                loadCities($(this).val(), null);
             });
-        });
 
-        $(document).ready(function() {
-            $('[id^=autoSubmitCheckboxCost_]').change(function() {
-                var formId = $(this).attr('id').replace('autoSubmitCheckboxCost_', 'checkboxCostForm_');
-
-                // Tampilkan loading sebelum submit
-                $('#loadingOverlay').css('display', 'flex');
-
-                // Disable checkbox yang berubah
-                $(this).prop('disabled', true);
-
-                // Set status loading di sessionStorage
-                sessionStorage.setItem('loadingDisplayed', true);
-
-                $('#' + formId).submit();
+            // User ganti Kota -> Load Kecamatan
+            $('#city_id').on('change', function() {
+                loadDistricts($(this).val(), null);
             });
-        });
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui nilai input tersembunyi
-            function updateHiddenInput(inputId, hiddenInputId) {
-                $(inputId).on('input', function() {
-                    $(hiddenInputId).val($(this).val());
-                });
+            // =================================================================
+            // 4. AUTO-RUN SAAT HALAMAN RELOAD (RE-HYDRATION)
+            // =================================================================
+
+            // Jika session provinsi ada isinya, jalankan rantai pemuatan
+            if (savedProvinceId) {
+                loadCities(savedProvinceId, savedCityId);
             }
 
-            // Panggil fungsi untuk setiap input
-            updateHiddenInput('#address_id', '#addressHidden_id');
-            updateHiddenInput('#address', '#addressHidden');
-            updateHiddenInput('#city', '#cityHidden');
-            // updateHiddenInput('#province', '#provinceHidden');
-            // updateHiddenInput('#postal_code', '#postalCodeHidden');
-            updateHiddenInput('#note', '#noteHidden');
-        });
+            // =================================================================
+            // 5. UPDATE HIDDEN INPUTS & SINKRONISASI
+            // =================================================================
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui nilai input tersembunyi
-            function updateHideInput(inputId, hiddenInputId) {
-                $(inputId).on('input', function() {
-                    $(hiddenInputId).val($(this).val());
+            function syncInput(sourceId, targetId) {
+                var source = $(sourceId);
+                var target = $(targetId);
+
+                // Saat user mengetik/memilih
+                source.on('input change', function() {
+                    target.val($(this).val());
                 });
+
+                // Saat halaman load (copy nilai session awal)
+                if (source.val()) {
+                    target.val(source.val());
+                }
             }
 
-            // Panggil fungsi untuk setiap input
-            updateHideInput('#address_id', '#addressHide_id');
-            updateHideInput('#address', '#addressHide');
-            updateHideInput('#city', '#cityHide');
-            // updateHideInput('#province', '#provinceHide');
-            // updateHideInput('#postal_code', '#postalCodeHide');
-            updateHideInput('#note', '#noteHide');
-        });
+            // A. Sinkronisasi ke Form "Cek Ongkir" & "Bayar"
+            syncInput('#address_id', '#destination_address_id');
+            syncInput('#address', '#destination_address');
+            syncInput('#note', '#destination_note');
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui nilai input tersembunyi
-            function updateHideInput(inputId, hiddenInputId) {
-                $(inputId).on('input', function() {
-                    $(hiddenInputId).val($(this).val());
-                });
-            }
+            syncInput('#province_id', '#destination_province');
+            syncInput('#city_id', '#destination_city');
+            syncInput('#district_id', '#destination_district');
 
-            // Panggil fungsi untuk setiap input
-            updateHideInput('#address_id', '#destination_address_id');
-            updateHideInput('#address', '#destination_address');
-            updateHideInput('#city', '#destination_city_1');
-            updateHideInput('#city', '#destination_city_2');
-            updateHideInput('#note', '#destination_note');
-        });
+            // B. Sinkronisasi ke Form Bayar (Store) - ID Unik
+            syncInput('#province_id', '#final_province_id');
+            syncInput('#city_id', '#final_city_id');
+            syncInput('#district_id', '#final_district_id');
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui nilai input tersembunyi
-            function updateHideInput(inputId, hiddenInputId) {
-                $(inputId).on('input', function() {
-                    $(hiddenInputId).val($(this).val());
-                });
-            }
+            // C. Sinkronisasi ke Form "Cek Kupon"
+            syncInput('#address_id', '#addressHidden_id');
+            syncInput('#address', '#addressHidden');
+            syncInput('#province_id', '#provinceHidden');
+            syncInput('#city_id', '#cityHidden');
+            syncInput('#district_id', '#districtHidden');
+            syncInput('#note', '#noteHidden');
 
-            // Panggil fungsi untuk setiap input
-            updateHideInput('#city', '#destination_city');
-        });
+            // D. Sinkronisasi ke Form "Toggle Poin"
+            syncInput('#address_id', '#addressHide_id');
+            syncInput('#address', '#addressHide');
+            syncInput('#city_id', '#cityHide');
+            syncInput('#district_id', '#districtHide');
+            syncInput('#note', '#noteHide');
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui nilai input tersembunyi
-            function updateHiddenInput(inputId, hiddenInputId) {
-                $(inputId).on('input', function() {
-                    $(hiddenInputId).val($(this).val());
-                });
-            }
-
+            // E. Sinkronisasi Looping (Ongkir & Kupon)
             @if (session('costs'))
-                {{-- @php
-                    // @dd(session('costs'))
-                @endphp --}}
-                // Daftar form ID yang digunakan
-                var formIds = [
-                    @foreach (session('costs')['results'] as $costs)
-                        @foreach ($costs['costs'] as $index => $cost)
-                            '{{ $index }}',
-                        @endforeach
+                var costFormIds = [
+                    @foreach (session('costs') as $index => $cost)
+                        '{{ $index }}',
                     @endforeach
                 ];
-
-                // Panggil fungsi untuk setiap input dalam setiap form
-                formIds.forEach(function(formId) {
-                    updateHiddenInput('#address_id', '#destination_address_id_' + formId);
-                    updateHiddenInput('#address', '#destination_address_' + formId);
-                    updateHiddenInput('#city', '#destination_city_' + formId);
-                    updateHiddenInput('#note', '#destination_note_' + formId);
+                costFormIds.forEach(function(formId) {
+                    syncInput('#address_id', '#destination_address_id_' + formId);
+                    syncInput('#address', '#destination_address_' + formId);
+                    syncInput('#province_id', '#destination_province_' + formId);
+                    syncInput('#city_id', '#destination_city_' + formId);
+                    syncInput('#district_id', '#destination_district_' + formId);
+                    syncInput('#note', '#destination_note_' + formId);
                 });
             @endif
-        });
 
-        $(document).ready(function() {
-            // Fungsi untuk memperbarui nilai input tersembunyi
-            function updateHiddenInput(inputId, hiddenInputId) {
-                $(inputId).on('input', function() {
-                    $(hiddenInputId).val($(this).val());
-                });
+            @foreach ($coupons as $coupon)
+                var couponId = '{{ $coupon->id }}';
+                syncInput('#address_id', '#addressHidden_id_' + couponId);
+                syncInput('#address', '#addressHidden_' + couponId);
+                syncInput('#province_id', '#provinceHidden_' + couponId);
+                syncInput('#city_id', '#cityHidden_' + couponId);
+                syncInput('#district_id', '#districtHidden_' + couponId);
+                syncInput('#note', '#noteHidden_' + couponId);
+            @endforeach
+
+            @foreach ($carts as $cart)
+                syncInput('#district_id', '#destination_district_delete_{{ $cart->id }}');
+            @endforeach
+
+            // =================================================================
+            // 6. HELPER FUNCTIONS (Checkbox, Image Preview, Loading)
+            // =================================================================
+
+            function updateCourierHidden() {
+                var checkedValue = $('.courier-checkbox:checked').val();
+                $('#courier_hidden').val(checkedValue || '');
             }
-
-            // Daftar form ID yang digunakan
-            var formIds = [
-                @foreach ($coupons as $coupon)
-                    '{{ $coupon->id }}',
-                @endforeach
-            ];
-
-            // Panggil fungsi untuk setiap input dalam setiap form
-            formIds.forEach(function(formId) {
-                updateHiddenInput('#address_id', '#addressHidden_id_' + formId);
-                updateHiddenInput('#address', '#addressHidden_' + formId);
-                updateHiddenInput('#city', '#cityHidden_' + formId);
-                // updateHiddenInput('#province', '#provinceHidden_' + formId);
-                // updateHiddenInput('#postal_code', '#postalCodeHidden_' + formId);
-                updateHiddenInput('#note', '#noteHidden_' + formId);
-            });
-        });
-
-        $(document).ready(function() {
-            $('#togglePoint').on('change', function() {
-                // Tampilkan loading sebelum submit
-                $('#loadingOverlay').css('display', 'flex');
-
-                // Disable checkbox yang berubah
-                $(this).prop('disabled', true);
-
-                // Set status loading di sessionStorage
-                sessionStorage.setItem('loadingDisplayed', true);
-
-                $('#togglePointForm').submit();
-            });
-        });
-
-        $(document).ready(function() {
+            updateCourierHidden();
             $('.courier-checkbox').on('change', function() {
                 if (this.checked) {
                     $('.courier-checkbox').not(this).prop('checked', false);
                 }
+                updateCourierHidden();
             });
-        });
 
-        $(document).ready(function() {
+            function updateCostHidden() {
+                var checkedValue = $('.cost-checkbox:checked').val();
+                $('#service_hidden').val(checkedValue || '');
+            }
+            updateCostHidden();
             $('.cost-checkbox').on('change', function() {
                 if (this.checked) {
                     $('.cost-checkbox').not(this).prop('checked', false);
                 }
+                updateCostHidden();
             });
-        });
 
-        $(document).ready(function() {
+            // Auto Submit Handlers
+            $('[id^=autoSubmitCheckbox_]').change(function() {
+                var formId = $(this).attr('id').replace('autoSubmitCheckbox_', 'checkboxForm_');
+                $('#loadingOverlay').css('display', 'flex');
+                $(this).prop('disabled', true);
+                sessionStorage.setItem('loadingDisplayed', true);
+                $('#' + formId).submit();
+            });
+
+            $('[id^=autoSubmitCheckboxCost_]').change(function() {
+                var formId = $(this).attr('id').replace('autoSubmitCheckboxCost_', 'checkboxCostForm_');
+                $('#loadingOverlay').css('display', 'flex');
+                $(this).prop('disabled', true);
+                sessionStorage.setItem('loadingDisplayed', true);
+                $('#' + formId).submit();
+            });
+
+            $('#togglePoint').on('change', function() {
+                $('#loadingOverlay').css('display', 'flex');
+                $(this).prop('disabled', true);
+                sessionStorage.setItem('loadingDisplayed', true);
+                $('#togglePointForm').submit();
+            });
+
             $('.coupon-checkbox').on('change', function() {
                 if (this.checked) {
                     $('.coupon-checkbox').not(this).prop('checked', false);
                 }
             });
+
+            function displayImagePreview(input) {
+                var preview = $('#imagePreview');
+                preview.empty();
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var img = $('<img>').attr('src', e.target.result).addClass(
+                            'w-6/12 mx-auto rounded-lg object-cover');
+                        preview.append(img);
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
         });
     </script>
 @endsection

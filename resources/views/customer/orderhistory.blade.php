@@ -159,7 +159,8 @@
                                     <div class="felx flex-col">
                                         <p class="text-base font-semibold text-gray-900">{{ $order_detail->product->name }}
                                         </p>
-                                        <p class="text-sm font-normal text-gray-600 break-words whitespace-normal text-left">
+                                        <p
+                                            class="text-sm font-normal text-gray-600 break-words whitespace-normal text-left">
                                             {{ $order_detail->product->description }}
                                         </p>
                                         <p class="mt-2 text-sm font-normal text-gray-600">
@@ -208,12 +209,13 @@
                                 <h3 class="text-base text-center font-semibold text-gray-900">Riwayat Pengiriman</h3>
                                 <div class="flex flex-col justify-center items-center">
                                     <div
-                                        class="flex flex-col bg-neutral-100 rounded-lg justify-center items-center p-6 sm:w-fit">
+                                        class="flex flex-col bg-neutral-100 rounded-lg justify-center items-center p-6 lg:w-3/5">
                                         @foreach ($shipment_histories[$order->id] as $index => $shipment_history)
-                                            <div class="w-full flex flex-row justify-start items-start space-x-4">
-                                                <div class="relative flex flex-col justify-center items-center h-full">
+                                            <div class="w-full flex flex-row justify-start space-x-4 {{ $index >= 3 ? 'hidden-history-' . $order->id : '' }}"
+                                                style="{{ $index >= 3 ? 'display: none;' : '' }}">
+                                                <div class="relative flex flex-col items-center">
                                                     <span
-                                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-yellow-500 ring-4 ring-yellow-500">
+                                                        class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-900 text-yellow-500 ring-4 ring-yellow-500 z-10">
                                                         <svg class="h-4 w-4" aria-hidden="true"
                                                             xmlns="http://www.w3.org/2000/svg" fill="none"
                                                             viewBox="0 0 24 24">
@@ -222,22 +224,39 @@
                                                                 d="M5 11.917 9.724 16.5 19 7.5" />
                                                         </svg>
                                                     </span>
-                                                    @if (!$loop->last && count($shipment_histories[$order->id]) > 1)
+                                                    @if (!$loop->last)
                                                         <div
-                                                            class="absolute top-9 left-1/2 transform -translate-x-1/2 w-0.5 h-60 sm:h-20 lg:h-16 bg-gray-400">
+                                                            class="absolute top-8 bottom-0 left-1/2 transform -translate-x-1/2 w-0.5 bg-gray-400 -z-0">
                                                         </div>
                                                     @endif
                                                 </div>
-                                                <div class="flex flex-col space-y-1 mb-4">
+                                                <div class="flex flex-col space-y-1 pb-8">
                                                     <span class="text-base font-semibold">
                                                         {{ \Carbon\Carbon::parse($shipment_history['manifest_date'])->format('d F Y') }},
-                                                        {{ \Carbon\Carbon::createFromFormat('H:i', $shipment_history['manifest_time'])->format('g:i A') }}
+                                                        {{ \Carbon\Carbon::parse($shipment_history['manifest_time'])->format('g:i A') }}
                                                     </span>
                                                     <span
                                                         class="text-sm font-normal">{{ $shipment_history['manifest_description'] }}</span>
+                                                    <span
+                                                        class="text-xs text-gray-500">({{ $shipment_history['city_name'] }})</span>
                                                 </div>
                                             </div>
                                         @endforeach
+                                        @if (count($shipment_histories[$order->id]) > 3)
+                                            <button type="button" id="btn-toggle-{{ $order->id }}"
+                                                onclick="toggleHistory({{ $order->id }})"
+                                                class="mt-2 text-xs font-medium text-yellow-600 hover:text-yellow-700 hover:underline focus:outline-none flex items-center transition-all duration-300">
+                                                <span>Lihat Riwayat Sebelumnya
+                                                    ({{ count($shipment_histories[$order->id]) - 3 }})</span>
+                                                <svg id="icon-chevron-{{ $order->id }}"
+                                                    class="w-3 h-3 ms-1 transition-transform duration-300"
+                                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 10 6">
+                                                    <path stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                                </svg>
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -278,4 +297,20 @@
             {{ $orders->links() }}
         </div>
     </div>
+    <script language="javascript">
+        function toggleHistory(orderId) {
+            $('.hidden-history-' + orderId).slideToggle(300);
+            var btn = $('#btn-toggle-' + orderId + ' span');
+            var icon = $('#icon-chevron-' + orderId);
+
+            if (btn.text().includes('Lihat Riwayat')) {
+                btn.text('Tutup Riwayat Lama');
+                icon.addClass('rotate-180');
+            } else {
+                var count = $('.hidden-history-' + orderId).length;
+                btn.text('Lihat Riwayat Sebelumnya (' + count + ')');
+                icon.removeClass('rotate-180');
+            }
+        }
+    </script>
 @endsection

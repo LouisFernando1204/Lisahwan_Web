@@ -197,49 +197,69 @@ class OrderController extends Controller
         $carts = $cart_user ? $cart_user->cart_detail : null;
 
         foreach ($orders as $order) {
-            $courier = '';
-            $waybill =  $order->waybill;
-            if ($waybill != '') {
+            $waybill = $order->waybill;
+
+            if ($waybill) {
+                $courier = '';
                 if (stripos($order->shipment_service, 'Lion') !== false) {
                     $courier = 'lion';
                 } elseif (stripos($order->shipment_service, 'AnterAja') !== false) {
                     $courier = 'anteraja';
                 }
 
-                $responseWaybills = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
-                ])->post('https://pro.rajaongkir.com/api/waybill', [
-                    'waybill' => $waybill,
-                    'courier' => $courier
-                ]);
+                try {
+                    $queryParams = http_build_query([
+                        'awb' => $waybill,
+                        'courier' => $courier
+                    ]);
 
-                // Memeriksa apakah respons dari API valid
-                $responseJson = $responseWaybills->json();
+                    $responseWaybills = Http::withHeaders([
+                        'key' => config('rajaongkir.api_key'),
+                    ])->post('https://rajaongkir.komerce.id/api/v1/track/waybill?' . $queryParams);
 
-                if (isset($responseJson['rajaongkir']['status']['code']) && $responseJson['rajaongkir']['status']['code'] !== 200) {
+                    $responseJson = $responseWaybills->json();
+
+                    if (isset($responseJson['meta']['code']) && $responseJson['meta']['code'] == 200) {
+                        $waybills = $responseJson['data'];
+
+                        $status = null;
+                        if (!empty($waybills['summary']['status'])) {
+                            $status = $waybills['summary']['status'];
+                        } elseif (!empty($waybills['delivery_status']['status'])) {
+                            $status = $waybills['delivery_status']['status'];
+                        }
+
+                        if ($status) {
+                            $order->update(['shipment_status' => $status]);
+                        }
+
+                        if (!empty($waybills['details']['waybill_date'])) {
+                            $shipDate = $waybills['details']['waybill_date'];
+                            if (!empty($waybills['details']['waybill_time'])) {
+                                $shipDate .= ' ' . $waybills['details']['waybill_time'];
+                            }
+                            $order->update(['shipment_date' => $shipDate]);
+                        }
+
+                        if (!empty($waybills['delivery_status']['pod_date'])) {
+                            $podDate = $waybills['delivery_status']['pod_date'];
+                            if (!empty($waybills['delivery_status']['pod_time'])) {
+                                $podDate .= ' ' . $waybills['delivery_status']['pod_time'];
+                            }
+
+                            $order->update([
+                                'arrived_date' => $podDate,
+                                'acceptbyCustomer_status' => 'sudah'
+                            ]);
+                        }
+                    } else {
+                        return redirect()->back()->withErrors([
+                            'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
+                        ]);
+                    }
+                } catch (\Exception $e) {
                     return redirect()->back()->withErrors([
                         'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
-                    ]);
-                }
-
-                $waybills = $responseWaybills['rajaongkir']['result'];
-
-                if (!empty($waybills['summary']['status'])) {
-                    $order->update([
-                        'shipment_status' => $waybills['summary']['status']
-                    ]);
-                }
-
-                if (!empty($waybills['details']['waybill_date']) && !empty($waybills['details']['waybill_time'])) {
-                    $order->update([
-                        'shipment_date' => $waybills['details']['waybill_date'] . ' ' . $waybills['details']['waybill_time'],
-                    ]);
-                }
-
-                if (!empty($waybills['delivery_status']['pod_date']) && !empty($waybills['delivery_status']['pod_time'])) {
-                    $order->update([
-                        'arrived_date' => $waybills['delivery_status']['pod_date'] . ' ' . $waybills['delivery_status']['pod_time'],
-                        'acceptbyCustomer_status' => 'sudah'
                     ]);
                 }
             }
@@ -791,49 +811,72 @@ class OrderController extends Controller
         $carts = $cart_user ? $cart_user->cart_detail : null;
 
         foreach ($orders as $order) {
-            $courier = '';
-            $waybill =  $order->waybill;
+            $waybill = $order->waybill;
+
             if ($waybill) {
+                $courier = '';
                 if (stripos($order->shipment_service, 'Lion') !== false) {
                     $courier = 'lion';
                 } elseif (stripos($order->shipment_service, 'AnterAja') !== false) {
                     $courier = 'anteraja';
                 }
 
-                $responseWaybills = Http::withHeaders([
-                    'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
-                ])->post('https://pro.rajaongkir.com/api/waybill', [
-                    'waybill' => $waybill,
-                    'courier' => $courier
-                ]);
+                try {
+                    $queryParams = http_build_query([
+                        'awb' => $waybill,
+                        'courier' => $courier
+                    ]);
 
-                // Memeriksa apakah respons dari API valid
-                $responseJson = $responseWaybills->json();
+                    $responseWaybills = Http::withHeaders([
+                        'key' => config('rajaongkir.api_key'),
+                    ])->post('https://rajaongkir.komerce.id/api/v1/track/waybill?' . $queryParams);
 
-                if (isset($responseJson['rajaongkir']['status']['code']) && $responseJson['rajaongkir']['status']['code'] !== 200) {
+                    $responseJson = $responseWaybills->json();
+
+                    if (isset($responseJson['meta']['code']) && $responseJson['meta']['code'] == 200) {
+                        $waybills = $responseJson['data'];
+
+                        $status = null;
+                        if (!empty($waybills['summary']['status'])) {
+                            $status = $waybills['summary']['status'];
+                        } elseif (!empty($waybills['delivery_status']['status'])) {
+                            $status = $waybills['delivery_status']['status'];
+                        }
+
+                        if ($status) {
+                            $order->update(['shipment_status' => $status]);
+                        }
+
+                        if (!empty($waybills['details']['waybill_date'])) {
+                            $shipDate = $waybills['details']['waybill_date'];
+                            if (!empty($waybills['details']['waybill_time'])) {
+                                $shipDate .= ' ' . $waybills['details']['waybill_time'];
+                            }
+
+                            $order->update([
+                                'shipment_date' => $shipDate,
+                            ]);
+                        }
+
+                        if (!empty($waybills['delivery_status']['pod_date'])) {
+                            $podDate = $waybills['delivery_status']['pod_date'];
+                            if (!empty($waybills['delivery_status']['pod_time'])) {
+                                $podDate .= ' ' . $waybills['delivery_status']['pod_time'];
+                            }
+
+                            $order->update([
+                                'arrived_date' => $podDate,
+                                'acceptbyCustomer_status' => 'sudah'
+                            ]);
+                        }
+                    } else {
+                        return redirect()->back()->withErrors([
+                            'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
+                        ]);
+                    }
+                } catch (\Exception $e) {
                     return redirect()->back()->withErrors([
                         'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
-                    ]);
-                }
-
-                $waybills = $responseWaybills['rajaongkir']['result'];
-
-                if (!empty($waybills['summary']['status'])) {
-                    $order->update([
-                        'shipment_status' => $waybills['summary']['status']
-                    ]);
-                }
-
-                if (!empty($waybills['details']['waybill_date']) && !empty($waybills['details']['waybill_time'])) {
-                    $order->update([
-                        'shipment_date' => $waybills['details']['waybill_date'] . ' ' . $waybills['details']['waybill_time'],
-                    ]);
-                }
-
-                if (!empty($waybills['delivery_status']['pod_date']) && !empty($waybills['delivery_status']['pod_time'])) {
-                    $order->update([
-                        'arrived_date' => $waybills['delivery_status']['pod_date'] . ' ' . $waybills['delivery_status']['pod_time'],
-                        'acceptbyCustomer_status' => 'sudah'
                     ]);
                 }
             }
@@ -916,45 +959,63 @@ class OrderController extends Controller
         ]);
 
         $courier = '';
-        $waybill =  $validatedData['waybill'];
         if (stripos($order->shipment_service, 'Lion') !== false) {
             $courier = 'lion';
         } elseif (stripos($order->shipment_service, 'AnterAja') !== false) {
             $courier = 'anteraja';
         }
 
-        $responseWaybills = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
-        ])->post('https://pro.rajaongkir.com/api/waybill', [
-            'waybill' => $waybill,
-            'courier' => $courier
-        ]);
+        try {
+            $queryParams = http_build_query([
+                'awb' => $validatedData['waybill'],
+                'courier' => $courier
+            ]);
 
-        // Memeriksa apakah respons dari API valid
-        $responseJson = $responseWaybills->json();
+            $responseWaybills = Http::withHeaders([
+                'key' => config('rajaongkir.api_key'),
+            ])->post('https://rajaongkir.komerce.id/api/v1/track/waybill?' . $queryParams);
 
-        if (isset($responseJson['rajaongkir']['status']['code']) && $responseJson['rajaongkir']['status']['code'] !== 200) {
+            $responseJson = $responseWaybills->json();
+
+            if (isset($responseJson['meta']['code']) && $responseJson['meta']['code'] == 200) {
+                $waybills = $responseJson['data'];
+
+                $status = null;
+                if (!empty($waybills['summary']['status'])) {
+                    $status = $waybills['summary']['status'];
+                } elseif (!empty($waybills['delivery_status']['status'])) {
+                    $status = $waybills['delivery_status']['status'];
+                }
+
+                if ($status) {
+                    $order->update([
+                        'waybill' => $validatedData['waybill'],
+                        'shipment_status' => $status
+                    ]);
+                }
+
+                if (!empty($waybills['details']['waybill_date'])) {
+                    $shipDate = $waybills['details']['waybill_date'];
+                    if (!empty($waybills['details']['waybill_time'])) {
+                        $shipDate .= ' ' . $waybills['details']['waybill_time'];
+                    }
+
+                    $order->update([
+                        'shipment_date' => $shipDate
+                    ]);
+                }
+
+                return redirect()->route('owner.admin')->with('updateOrderStatus_success', 'Status order berhasil diperbarui!');
+            } else {
+                return redirect()->back()->withErrors([
+                    'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
+                ]);
+            }
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors([
                 'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
             ]);
         }
-
-        $waybills = $responseWaybills['rajaongkir']['result'];
-
-        if (!empty($waybills['summary']['status'])) {
-            $order->update([
-                'waybill' => $validatedData['waybill'],
-                'shipment_status' => $waybills['summary']['status']
-            ]);
-        }
-
-        if (!empty($waybills['details']['waybill_date']) && !empty($waybills['details']['waybill_time'])) {
-            $order->update([
-                'shipment_date' => $waybills['details']['waybill_date'] . ' ' . $waybills['details']['waybill_time']
-            ]);
-        }
-
-        return redirect()->route('owner.admin')->with('updateOrderStatus_success', 'Status order berhasil diperbarui!');
     }
 
     public function updateHistory(Request $request, Order $order)
@@ -988,48 +1049,63 @@ class OrderController extends Controller
         ]);
 
         $courier = '';
-        $waybill = $validatedData['waybill'];
-
         if (stripos($order->shipment_service, 'Lion') !== false) {
             $courier = 'lion';
         } elseif (stripos($order->shipment_service, 'AnterAja') !== false) {
             $courier = 'anteraja';
         }
 
-        $responseWaybills = Http::withHeaders([
-            'key' => '1b3d1a91f7ab9a1c6dcc5543cb9192fb',
-        ])->post('https://pro.rajaongkir.com/api/waybill', [
-            'waybill' => $waybill,
-            'courier' => $courier
-        ]);
+        try {
+            $queryParams = http_build_query([
+                'awb' => $validatedData['waybill'],
+                'courier' => $courier
+            ]);
 
-        // Memeriksa apakah respons dari API valid
-        $responseJson = $responseWaybills->json();
+            $responseWaybills = Http::withHeaders([
+                'key' => config('rajaongkir.api_key'),
+            ])->post('https://rajaongkir.komerce.id/api/v1/track/waybill?' . $queryParams);
 
-        // dd($responseJson);
+            $responseJson = $responseWaybills->json();
 
-        if (isset($responseJson['rajaongkir']['status']['code']) && $responseJson['rajaongkir']['status']['code'] !== 200) {
+            if (isset($responseJson['meta']['code']) && $responseJson['meta']['code'] == 200) {
+                $waybills = $responseJson['data'];
+
+                $status = null;
+                if (!empty($waybills['summary']['status'])) {
+                    $status = $waybills['summary']['status'];
+                } elseif (!empty($waybills['delivery_status']['status'])) {
+                    $status = $waybills['delivery_status']['status'];
+                }
+
+                if ($status) {
+                    $order->update([
+                        'waybill' => $validatedData['waybill'],
+                        'shipment_status' => $status
+                    ]);
+                }
+
+                if (!empty($waybills['details']['waybill_date'])) {
+                    $shipDate = $waybills['details']['waybill_date'];
+                    if (!empty($waybills['details']['waybill_time'])) {
+                        $shipDate .= ' ' . $waybills['details']['waybill_time'];
+                    }
+
+                    $order->update([
+                        'shipment_date' => $shipDate
+                    ]);
+                }
+
+                return redirect()->route('owner.order_history')->with('updateOrderStatus_success', 'Status order berhasil diperbarui!');
+            } else {
+                return redirect()->back()->withErrors([
+                    'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
+                ]);
+            }
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors([
                 'waybillNotValid_error' => 'Nomor resi tidak valid atau informasi pengiriman tidak ditemukan!'
             ]);
         }
-
-        $waybills = $responseJson['rajaongkir']['result'];
-
-        if (!empty($waybills['summary']['status'])) {
-            $order->update([
-                'waybill' => $validatedData['waybill'],
-                'shipment_status' => $waybills['summary']['status']
-            ]);
-        }
-
-        if (!empty($waybills['details']['waybill_date']) && !empty($waybills['details']['waybill_time'])) {
-            $order->update([
-                'shipment_date' => $waybills['details']['waybill_date'] . ' ' . $waybills['details']['waybill_time']
-            ]);
-        }
-
-        return redirect()->route('owner.order_history')->with('updateOrderStatus_success', 'Status order berhasil diperbarui!');
     }
 
     public function activateDiscount()
