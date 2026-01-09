@@ -5,11 +5,34 @@
         <div class="gap-12 items-center py-8 px-8 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-16">
             <div class="font-light sm:text-lg text-gray-500">
                 <h2 data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                    class="mb-3 text-4xl tracking-tight font-extrabold text-gray-900">Waktu Nyemil Jadi Hangat dan Renyah
+                    class="mb-3 text-4xl tracking-tight font-extrabold text-gray-900">Brand Story Lisahwan
                 </h2>
-                <p data-aos="fade-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800" class="mb-4">Dengan
-                    komitmen kami akan kualitas, kami menyediakan rangkaian camilan yang diolah dengan
-                    penuh dedikasi sehingga customer selalu mendapatkan cita rasa yang khas dari camilan Lisahwan.</p>
+                <!-- Paragraf utama (always visible) -->
+                <p data-aos="fade-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800" class="mb-4">
+                    Lisahwan berdiri sejak 2007. Berawal dari keluarga yang telah lama berkecimpung di dunia
+                    kuliner dan baking. Nama Lisahwan merupakan perpaduan antara nama pemilik Lisa dan marga
+                    Hwan, menjadi simbol komitmen terhadap kualitas, nilai keluarga, serta setiap produk
+                    Lisahwan yang dibuat dengan hati, karakter, dan tanggung jawab.
+                </p>
+                <!-- Hidden content -->
+                <div id="brandStoryMore" class="hidden">
+                    <p data-aos="fade-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800" class="mb-4">
+                        Lisahwan hadir dengan produk camilan, lauk kering, hingga Spikoe Lisahwan, resep
+                        keluarga yang kini telah menjadi ikon dan dikenal dengan teksturnya yang lembut serta
+                        kaya rasa. Seluruh produk diracik menggunakan bahan berkualitas dengan sentuhan cita
+                        rasa Nusantara.
+                    </p>
+                    <p data-aos="fade-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800" class="mb-4">
+                        Dalam perjalanannya, Lisahwan terus tumbuh menjadi brand yang dipercaya karena
+                        konsistensi, kualitas, dan inovasi. Bagi Lisahwan, makanan bukan hanya soal rasa,
+                        tetapi juga pengalaman, cerita, dan hubungan yang selalu dikenang oleh banyak hati.
+                    </p>
+                </div>
+                <!-- Toggle button -->
+                <button id="toggleBrandStory"
+                    class="mb-6 text-sm text-yellow-500 font-medium hover:underline focus:outline-none">
+                    Lihat lebih lanjut
+                </button>
                 <div class="flex flex-col sm:flex-row gap-y-2 sm:gap-y-0">
                     @if (!Auth::check())
                         <a data-aos="fade-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
@@ -55,87 +78,83 @@
                 class="max-w-screen-lg mb-10 w-full">
                 <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-white">Apa saja yang spesial dari Lisahwan?</h2>
                 <p class="sm:text-xl text-gray-400">
-                    Dalam inspirasi kekayaan hasil laut dan keanekaragaman bumbu rempah Jawa Timur, kami memahami bahwa
-                    dengan menggabungkan kedua elemen tersebut, kami mampu menciptakan camilan berkualitas tinggi dan lezat
-                    di Lisahwan.
+                    Produk Lisahwan dirancang untuk dinikmati oleh seluruh keluarga, mulai dari anak-anak hingga orang
+                    dewasa dan orang tua. Dengan rasa yang sesuai selera serta kualitas premium, Lisahwan menjadi pilihan
+                    untuk menemani momen kebersamaan keluarga sekaligus sebagai oleh-oleh spesial bercita rasa Nusantara.
                 </p>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 justify-center items-center">
-                <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                    class="flex flex-col justify-center items-center">
-                    <div>
-                        <svg class="w-6 h-6 text-yellow-500 text-center" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                            <path
-                                d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z" />
-                        </svg>
-                    </div>
-                    <h3 class="mt-2 text-center mb-2 text-xl font-bold text-yellow-500">Taste</h3>
-                    <p class="text-center text-gray-400">Setiap gigitan menghadirkan cita rasa
-                        istimewa yang sulit untuk dilupakan.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12 mb-12">
+                <!-- TRUST -->
+                <div data-aos="fade-up" data-aos-duration="800" class="flex flex-col items-center text-center">
+                    <svg class="w-6 h-6 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path d="M12 2L4 5v6c0 5.25 3.5 10.1 8 11.5 4.5-1.4 8-6.25 8-11.5V5l-8-3z" />
+                    </svg>
+                    <h3 class="mt-3 mb-2 text-xl font-bold text-yellow-500">Trust</h3>
+                    <p class="text-gray-400">
+                        Kepercayaan dibangun melalui konsistensi. Sejak 2007, Lisahwan menjaga kualitas rasa,
+                        pemilihan bahan, dan proses produksi agar setiap produk selalu dapat diandalkan.
+                    </p>
                 </div>
-
-                <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                    class="flex flex-col justify-center items-center">
-                    <div>
-                        <svg class="w-6 h-6 text-yellow-500 text-center" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                    </div>
-                    <h3 class="mt-2 text-center mb-2 text-xl font-bold text-yellow-500">Premium</h3>
-                    <p class="text-center text-gray-400">Mulai dari pemilihan bahan baku, hingga sampai packing diproses
-                        dengan cermat untuk memastikan kualitas dan rasa terbaik.</p>
+                <!-- VALUE -->
+                <div data-aos="fade-up" data-aos-duration="800" class="flex flex-col items-center text-center">
+                    <svg class="w-6 h-6 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        viewBox="0 0 20 20">
+                        <path
+                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.657 3.172 10.828a4 4 0 010-5.656z" />
+                    </svg>
+                    <h3 class="mt-3 mb-2 text-xl font-bold text-yellow-500">Value</h3>
+                    <p class="text-gray-400">
+                        Setiap produk Lisahwan dibuat dari bahan pilihan dengan standar kualitas tinggi,
+                        menghadirkan rasa khas Nusantara yang bernilai dan layak dibagikan.
+                    </p>
                 </div>
-
-                <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                    class="flex flex-col justify-center items-center">
-                    <div>
-                        <svg class="w-6 h-6 text-yellow-500 text-center" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
-                        </svg>
-                    </div>
-                    <h3 class="mt-2 text-center mb-2 text-xl font-bold text-yellow-500">Homemade</h3>
-                    <p class="text-center text-gray-400">Tiada yang dapat menyaingi cita rasa autentik, hangat, dan memikat
-                        ala
-                        homemade. </p>
+                <!-- EXPERIENCE -->
+                <div data-aos="fade-up" data-aos-duration="800" class="flex flex-col items-center text-center">
+                    <svg class="w-6 h-6 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        viewBox="0 0 20 20">
+                        <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.012 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z" />
+                    </svg>
+                    <h3 class="mt-3 mb-2 text-xl font-bold text-yellow-500">Experience</h3>
+                    <p class="text-gray-400">
+                        Lisahwan menghadirkan pengalaman menyeluruh, mulai dari rasa yang konsisten,
+                        tampilan produk yang menarik, hingga pelayanan yang ramah dan berkesan.
+                    </p>
                 </div>
-
-                <div
-                    class="flex flex-col lg:flex-row justify-center items-center lg:col-span-3 lg:gap-x-6 gap-y-10 lg:gap-y-0">
-                    <div data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
-                        class="flex flex-col justify-center items-center">
-                        <div>
-                            <svg class="w-6 h-6 text-yellow-500 text-center" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M7.824 5.937a1 1 0 0 0 .726-.312 2.042 2.042 0 0 1 2.835-.065 1 1 0 0 0 1.388-1.441 3.994 3.994 0 0 0-5.674.13 1 1 0 0 0 .725 1.688Z" />
-                                <path
-                                    d="M17 7A7 7 0 1 0 3 7a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1a1 1 0 0 0 1-1V7a5 5 0 1 1 10 0v7.083A2.92 2.92 0 0 1 12.083 17H12a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h1a1.993 1.993 0 0 0 1.722-1h.361a4.92 4.92 0 0 0 4.824-4H17a3 3 0 0 0 3-3v-2a3 3 0 0 0-3-3Z" />
-                            </svg>
-                        </div>
-                        <h3 class="mt-2 text-center mb-2 text-xl font-bold text-yellow-500">Fast Respond</h3>
-                        <p class="text-center text-gray-400">Kami siap memberikan respon terbaik untuk memastikan
-                            kebutuhan Anda segera terpenuhi.</p>
-                    </div>
-                    <div data-aos="fade-up" data-aos-anchor-placement="top-bottom"
-                        data-aos-duration="800"class="flex flex-col justify-center items-center">
-                        <div>
-                            <svg class="w-7 h-7 text-yellow-500 text-center" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <h3 class="mt-2 text-center mb-2 text-xl font-bold text-yellow-500">Terlaris</h3>
-                        <p class="text-center text-gray-400">Dengan semangat dan cinta, Lisahwan terus menghadirkan produk
-                            terbaik sehingga menjadi brand camilan yang
-                            terpercaya dan terlaris.</p>
-                    </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
+                <!-- HALAL -->
+                <div data-aos="fade-up" data-aos-duration="800" class="flex flex-col items-center text-center">
+                    <svg class="w-7 h-7 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10
+                        10-4.477 10-10S17.523 2 12 2zm4.707 7.293a1 1 0 0 0-1.414 0L11 13.586
+                        8.707 11.293a1 1 0 1 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l5-5a1 1 0 0 0 0-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <h3 class="mt-3 mb-2 text-xl font-bold text-yellow-500">
+                        Halal
+                    </h3>
+                    <p class="text-gray-400">
+                        Seluruh produk Lisahwan diproses dengan standar yang ketat dan telah
+                        bersertifikasi halal, sebagai komitmen menghadirkan produk yang aman
+                        dan berkualitas.
+                    </p>
+                </div>
+                <!-- FAST RESPONSE -->
+                <div data-aos="fade-up" data-aos-duration="800" class="flex flex-col items-center text-center">
+                    <svg class="w-7 h-7 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        viewBox="0 0 20 20">
+                        <path d="M11.3 1L1 11h6l-1 8 10.3-10H10l1.3-8z" />
+                    </svg>
+                    <h3 class="mt-3 mb-2 text-xl font-bold text-yellow-500">
+                        Fast Response
+                    </h3>
+                    <p class="text-gray-400">
+                        Kami berkomitmen memberikan respon cepat dan solutif agar setiap
+                        kebutuhan pelanggan ditangani dengan tepat waktu.
+                    </p>
                 </div>
             </div>
         </div>
@@ -268,4 +287,21 @@
         </div>
         @endif
     </div>
+    <script>
+        $(document).ready(function() {
+            let isExpanded = false;
+
+            $('#toggleBrandStory').on('click', function() {
+                if (!isExpanded) {
+                    $('#brandStoryMore').slideDown(300);
+                    $(this).text('Tutup');
+                    isExpanded = true;
+                } else {
+                    $('#brandStoryMore').slideUp(300);
+                    $(this).text('Lihat lebih lanjut');
+                    isExpanded = false;
+                }
+            });
+        });
+    </script>
 @endsection
