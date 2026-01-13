@@ -139,11 +139,11 @@
                                 class="text-sm font-medium">({{ $product->weight }} gram)</span>
                         </p>
                     @endif
-                    <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
+                    {{-- <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                         class="mt-4 text-base font-medium text-gray-900">Ketersediaan stok: <span
                             class="underline underline-offset-2 decoration-4 decoration-yellow-500">{{ $product->stock }}
                             buah</span>
-                    </p>
+                    </p> --}}
                     <hr data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                         class="h-px my-4 border-0 bg-gray-400">
                     <p data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
@@ -576,17 +576,17 @@
                                                         {{ number_format($bestseller->product->price, 0, ',', '.') }}</p>
                                                 @endif
                                             </div>
-                                            @if ($bestseller->product->stock == 0)
+                                            {{-- @if ($bestseller->product->stock == 0)
                                                 <p
                                                     class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-red-600 text-center mt-2">
-                                                    Stock Habis!</p>
+                                                    Stok Habis!</p>
                                             @else
                                                 <p
                                                     class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-lime-500 text-center mt-2">
                                                     Tersisa {{ $bestseller->product->stock }}
-                                                    stock
+                                                    stok
                                                     lagi!</p>
-                                            @endif
+                                            @endif --}}
                                             <div class="text-right">
                                                 <!-- SVG icon di kanan bawah dari gambar -->
                                                 <form

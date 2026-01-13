@@ -278,17 +278,17 @@
                                             {{ number_format($product->price, 0, ',', '.') }}</p>
                                     @endif
                                 </div>
-                                @if ($product->stock == 0)
+                                {{-- @if ($product->stock == 0)
                                     <p
                                         class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-red-600 text-center mt-2">
-                                        Stock Habis!</p>
+                                        Stok Habis!</p>
                                 @else
                                     <p
                                         class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-lime-500 text-center mt-2">
                                         Tersisa {{ $product->stock }}
-                                        stock
+                                        stok
                                         lagi!</p>
-                                @endif
+                                @endif --}}
                                 <div class="text-right">
                                     <!--SVG icon di kanan bawah dari gambar -->
                                     <form action="{{ route('member.wishlist.store', $product->id) }}" method="POST"
@@ -393,17 +393,17 @@
                                             {{ number_format($product->price, 0, ',', '.') }}</p>
                                     @endif
                                 </div>
-                                @if ($product->stock == 0)
+                                {{-- @if ($product->stock == 0)
                                     <p
                                         class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-red-600 text-center mt-2">
-                                        Stock Habis!</p>
+                                        Stok Habis!</p>
                                 @else
                                     <p
                                         class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-lime-500 text-center mt-2">
                                         Tersisa {{ $product->stock }}
-                                        stock
+                                        stok
                                         lagi!</p>
-                                @endif
+                                @endif --}}
                                 <!--SVG icon di kanan bawah dari gambar -->
                                 <div class="text-right">
                                     <form action="{{ route('member.wishlist.store', $product->id) }}" method="POST"

@@ -129,8 +129,8 @@
                     <svg class="w-7 h-7 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10
-                        10-4.477 10-10S17.523 2 12 2zm4.707 7.293a1 1 0 0 0-1.414 0L11 13.586
-                        8.707 11.293a1 1 0 1 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l5-5a1 1 0 0 0 0-1.414z"
+                            10-4.477 10-10S17.523 2 12 2zm4.707 7.293a1 1 0 0 0-1.414 0L11 13.586
+                            8.707 11.293a1 1 0 1 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l5-5a1 1 0 0 0 0-1.414z"
                             clip-rule="evenodd" />
                     </svg>
                     <h3 class="mt-3 mb-2 text-xl font-bold text-yellow-500">
@@ -217,17 +217,17 @@
                                                 {{ number_format($bestseller->product->price, 0, ',', '.') }}</p>
                                         @endif
                                     </div>
-                                    @if ($bestseller->product->stock == 0)
+                                    {{-- @if ($bestseller->product->stock == 0)
                                         <p
                                             class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-red-600 text-center mt-2">
-                                            Stock Habis!</p>
+                                            Stok Habis!</p>
                                     @else
                                         <p
                                             class="text-sm sm:text-base md:text-base lg:text-sm font-normal text-lime-500 text-center mt-2">
                                             Tersisa {{ $bestseller->product->stock }}
-                                            stock
+                                            stok
                                             lagi!</p>
-                                    @endif
+                                    @endif --}}
                                     <div class="text-right">
                                         @auth
                                             <!-- SVG icon di kanan bawah dari gambar -->

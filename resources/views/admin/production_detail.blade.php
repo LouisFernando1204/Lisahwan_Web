@@ -216,7 +216,7 @@
                             @if ($productDetail->production->count() == 0)
                                 <tr data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
                                     <td colspan="3" class="p-4 text-center">
-                                        <p class="text-gray-400">Belum ada riwayat stock
+                                        <p class="text-gray-400">Belum ada riwayat stok
                                         </p>
                                     </td>
                                 </tr>
