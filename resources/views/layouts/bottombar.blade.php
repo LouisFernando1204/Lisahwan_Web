@@ -43,7 +43,7 @@
                         <a class="flex flex-row items-center gap-3 mt-2 md:mt-0 w-fit"
                             href="https://www.tiktok.com/@lisahwan_official?_r=1&_t=ZS-931j0VRdAmq" target="_blank">
                             <img src="/images/tiktok_logo.png" class="w-6 rounded-md" alt="Instagram">
-                            <p class="hover:underline">Lisahwan Cakery</p>
+                            <p class="hover:underline">Lisahwan</p>
                         </a>
                         <a class="flex flex-row items-center gap-3 mt-2 md:mt-0 w-fit"
                             href="https://www.tokopedia.com/lisahwan" target="_blank">

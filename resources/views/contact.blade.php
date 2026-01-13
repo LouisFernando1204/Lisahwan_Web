@@ -45,7 +45,7 @@
                             <path
                                 d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.37V2h-3.45v13.672a2.889 2.889 0 1 1-2.889-2.889c.289 0 .567.045.832.127V9.4a6.346 6.346 0 0 0-.832-.056A6.328 6.328 0 1 0 15.808 15V8.873a8.268 8.268 0 0 0 4.781 1.526V7.027a4.818 4.818 0 0 1-.999-.341z" />
                         </svg>
-                        <p class="ml-2 text-xl">Lisahwan Cakery</p>
+                        <p class="ml-2 text-xl">Lisahwan</p>
                     </button>
                 </a>
                 <a data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
