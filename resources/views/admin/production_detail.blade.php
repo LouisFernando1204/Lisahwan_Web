@@ -221,7 +221,7 @@
                                     </td>
                                 </tr>
                             @else
-                                @foreach ($productDetail->production as $stock_history)
+                                @foreach ($productDetail->production->sortByDesc('date') as $stock_history)
                                     <tr data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                                         class="bg-white {{ $loop->last ? '' : 'border-b' }} text-center">
                                         <td scope="row" class="px-6 py-4">
