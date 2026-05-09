@@ -43,9 +43,9 @@ class OrderController extends Controller
         // Hapus kupon yang sudah kedaluwarsa
         Coupon::where('ending_time', '<', $now)->delete();
 
-        // Tentukan rentang tanggal hari ini dan kemarin
-        $startOfDay = Carbon::yesterday()->startOfDay(); // Awal hari kemarin (00:00:00 kemarin)
-        $endOfDay = Carbon::today()->endOfDay(); // Akhir hari ini (23:59:59 hari ini)
+        // Tentukan rentang tanggal 7 hari terakhir (termasuk hari ini)
+        $startOfDay = Carbon::now()->subDays(6)->startOfDay(); // Awal hari 6 hari lalu (00:00:00)
+        $endOfDay = Carbon::today()->endOfDay(); // Akhir hari ini (23:59:59)
 
         $ordersQuery = Order::query();
 
@@ -266,7 +266,7 @@ class OrderController extends Controller
         }
 
         return view('admin.admin_dashboard', [
-            "TabTitle" => "Daftar Order Hari ini dan Kemarin",
+            "TabTitle" => "Daftar Order 7 Hari Terakhir",
             "active_1" => "text-yellow-500",
             "orders" => $orders,
             "orderNumber" => $orderNumber,
