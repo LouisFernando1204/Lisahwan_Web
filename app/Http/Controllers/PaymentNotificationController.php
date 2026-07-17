@@ -42,7 +42,7 @@ class PaymentNotificationController extends Controller
                     if ($order) {
                         $order->update(['acceptbyAdmin_status' => 'paid']);
                     }
-                    return response()->json(['message' => 'Settlement payment successful and processed.']);
+                    return response()->json(['message' => 'Settlement payment successful and processed.', 'notification' => $notification->getResponse()]);
                 }
             } elseif ($transactionStatus == 'pending') {
                 if ($order) {

@@ -111,8 +111,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $cart->total_poin
@@ -171,8 +192,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $cart->total_poin
@@ -246,8 +288,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $customer->old_reward
@@ -312,8 +375,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $customer->old_reward
@@ -378,8 +462,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $customer->old_reward
@@ -444,8 +549,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $customer->old_reward
@@ -510,8 +636,29 @@ class OrderController extends Controller
             if (Session::has('checkout.city')) {
                 Session::forget('checkout.city');
             }
+            if (Session::has('checkout.city_id')) {
+                Session::forget('checkout.city_id');
+            }
+            if (Session::has('checkout.province_id')) {
+                Session::forget('checkout.province_id');
+            }
+            if (Session::has('checkout.district_id')) {
+                Session::forget('checkout.district_id');
+            }
             if (Session::has('checkout.note')) {
                 Session::forget('checkout.note');
+            }
+            if (Session::has('checkout.courier')) {
+                Session::forget('checkout.courier');
+            }
+            if (Session::has('checkout.service')) {
+                Session::forget('checkout.service');
+            }
+            if (Session::has('costs')) {
+                Session::forget('costs');
+            }
+            if (Session::has('pointStatus')) {
+                Session::forget('pointStatus');
             }
             $customer->update([
                 'reward' => $customer->reward + $customer->old_reward
@@ -551,13 +698,13 @@ class OrderController extends Controller
         $courier = $request->courier ?? ($cart ? $cart->courier : null);
 
         if (!$request->district_id && !$courier) {
-            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"])->withInput();
         }
         if (!$request->district_id) {
-            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"])->withInput();
         }
         if (!$courier) {
-            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
+            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"])->withInput();
         }
 
         $validatedData = $request->validate([
@@ -598,7 +745,7 @@ class OrderController extends Controller
             Session::put('costs', $costs);
             return redirect()->back()->withErrors([
                 'incorrectCoupon_error' => 'Oops, kupon yang anda masukkan masih salah!'
-            ]);
+            ])->withInput();
         }
 
         $user_coupon = UserCoupon::where('user_id', Auth::user()->id)->where('coupon_id', $coupon->id)->first();
@@ -607,7 +754,7 @@ class OrderController extends Controller
             Session::put('costs', $costs);
             return redirect()->back()->withErrors([
                 'alreadyAddCoupon_error' => "Oops, kupon {$coupon->title} sudah jadi milik anda!"
-            ]);
+            ])->withInput();
         }
 
         UserCoupon::create([
@@ -635,13 +782,13 @@ class OrderController extends Controller
         $courier = $request->courier ?? ($cart ? $cart->courier : null);
 
         if (!$request->district_id && !$courier) {
-            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"])->withInput();
         }
         if (!$request->district_id) {
-            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"])->withInput();
         }
         if (!$courier) {
-            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
+            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"])->withInput();
         }
 
         $coupon = Coupon::findOrFail($id);
@@ -736,11 +883,11 @@ class OrderController extends Controller
             } elseif ($user_coupon->quantity == 0) {
                 return redirect()->back()->withErrors([
                     'couponExpired_error' => "Oops, kupon {$coupon->title} sudah habis!"
-                ]);
+                ])->withInput();
             } else {
                 return redirect()->back()->withErrors([
                     'couponExpired_error' => "Oops, kupon {$coupon->title} sudah kedaluwarsa!"
-                ]);
+                ])->withInput();
             }
         }
     }
@@ -758,13 +905,13 @@ class OrderController extends Controller
         $courier = $request->courier ?? ($cart ? $cart->courier : null);
 
         if (!$request->district_id && !$courier) {
-            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"])->withInput();
         }
         if (!$request->district_id) {
-            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"])->withInput();
         }
         if (!$courier) {
-            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
+            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"])->withInput();
         }
 
         $user = User::where('id', Auth::user()->id)->first();
@@ -832,7 +979,7 @@ class OrderController extends Controller
         $request->session()->put('checkout.note', $request->note);
 
         if (!$request->district_id) {
-            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
+            return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"])->withInput();
         } else {
             if (!$request->courier) {
                 $courierStatus_lion = Session::get('courierStatus_lion');
@@ -843,7 +990,7 @@ class OrderController extends Controller
                 if ($courierStatus_anteraja) {
                     Session::forget('courierStatus_anteraja');
                 }
-                return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
+                return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"])->withInput();
             } else {
                 $origin_district_id = 5902;
 
@@ -885,8 +1032,8 @@ class OrderController extends Controller
                         }
                     }
 
+                    Session::put('costs', $costs);
                     return back()->with([
-                        'costs' => $costs,
                         'courier' => $request->courier
                     ]);
                 } else {
@@ -943,6 +1090,10 @@ class OrderController extends Controller
                 "shipment_price" => $shipmentPrice
             ]);
 
+            // Simpan courier dan service ke session agar persist saat back dari Midtrans
+            $request->session()->put('checkout.courier', $request->courier);
+            $request->session()->put('checkout.service', $serviceName);
+
             $destinationId = $request->district_id;
             $sessionKey = 'costStatus_' . $id . '_' . $destinationId . '_' . $request->courier;
 
@@ -957,10 +1108,9 @@ class OrderController extends Controller
                 }
             }
 
+            Session::put('costs', $costs);
             return redirect()->route('member.checkout')->with([
-                'chooseShipmentPrice_success',
-                "Anda memilih {$serviceName} ({$serviceDescription})!",
-                'costs' => $costs
+                'chooseShipmentPrice_success' => "Anda memilih {$serviceName} ({$serviceDescription})!"
             ]);
         } else {
             return back()->withErrors(['error' => 'Gagal memilih layanan pengiriman.']);
@@ -992,6 +1142,18 @@ class OrderController extends Controller
             // REWARD POIN SYSTEM
             $point = Point::first();
             if ($point) {
+                $customer = User::where('id', Auth::user()->id)->first();
+
+                // Restore abandoned points if user returns to checkout
+                if ($customer->old_reward > 0) {
+                    $customer->update([
+                        'reward' => $customer->reward + $customer->old_reward,
+                        'old_reward' => 0
+                    ]);
+                    $customer->refresh();
+                    Auth::setUser($customer);
+                }
+
                 $total_price = $cart->cart_detail->sum('price');
                 $total_poin = $total_price * ($point->percentage_from_totalprice / 100);
 
@@ -1003,7 +1165,6 @@ class OrderController extends Controller
                     'total_poin' => $total_poin
                 ]);
 
-                $customer = User::where('id', Auth::user()->id)->first();
                 $reward_now = $customer->reward * $point->money_per_poin;
             } else {
                 $total_poin = 0;
@@ -1130,7 +1291,11 @@ class OrderController extends Controller
                         $trackData = $responseBody['data'];
 
                         if (!empty($trackData['manifest'])) {
-                            $shipment_histories[$order->id] = $trackData['manifest'];
+                            $manifest = $trackData['manifest'];
+                            if ($courier == 'lion') {
+                                $manifest = array_reverse($manifest);
+                            }
+                            $shipment_histories[$order->id] = $manifest;
                         }
 
                         $newStatus = null;
@@ -1215,6 +1380,8 @@ class OrderController extends Controller
             'address_id'   => 'required_without:address|numeric',
             'address'      => 'required_if:address_id,0|string|nullable|max:100',
             'district_id'  => 'required|numeric',
+            'courier'      => 'required|string',
+            'service'      => 'required|string',
             'note'         => 'nullable|string|max:255',
             'total_poin'   => 'required|numeric',
             'reward_now'   => 'numeric'
@@ -1226,16 +1393,16 @@ class OrderController extends Controller
             'address.max'         => 'Alamat tidak boleh lebih dari :max karakter!',
             'district_id.required' => 'Mohon pilih kecamatan tujuan pengiriman!',
             'district_id.numeric'  => 'Data kecamatan tidak valid!',
+            'courier.required'     => 'Oops, anda lupa memilih jasa pengiriman yang akan digunakan!',
+            'courier.string'       => 'Data jasa pengiriman tidak valid!',
+            'service.required'     => 'Oops, anda lupa memilih layanan pengiriman! Silakan pilih layanan terlebih dahulu.',
+            'service.string'       => 'Data layanan pengiriman tidak valid!',
             'note.string' => 'Catatan harus berupa teks!',
             'note.max'    => 'Catatan tidak boleh lebih dari :max karakter!',
             'total_poin.required' => 'Terjadi kesalahan sistem: Total poin tidak ditemukan.',
             'total_poin.numeric'  => 'Format total poin harus berupa angka!',
             'reward_now.numeric'  => 'Format reward saat ini harus berupa angka!',
         ]);
-
-        if (!$request->courier) {
-            return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
-        }
 
         $order_date = now();
         $cart = Cart::where('user_id', Auth::user()->id)->first();
@@ -1285,9 +1452,12 @@ class OrderController extends Controller
             }
         }
 
+        if ($serviceName === null) {
+            return redirect()->back()->withErrors(['service' => "Layanan pengiriman tidak cocok dengan kurir yang dipilih! Silakan klik 'Cek Ongkir' lagi dan pilih ulang layanan pengiriman."]);
+        }
+
         if ($shipment_price_check === null || $shipment_price_check != $shipment_price) {
             if ($courierName == null) $courierName = strtoupper($request->courier);
-            if ($serviceName == null) $serviceName = $request->service;
         }
 
         $shipment_service = $courierName . ', ' . $serviceName;
@@ -1480,6 +1650,14 @@ class OrderController extends Controller
                 $paymentUrl = Snap::createTransaction($params)->redirect_url;
                 return redirect($paymentUrl);
             } catch (\Exception $e) {
+                if (Session::has('pointStatus')) {
+                    $customer->update([
+                        'reward' => $customer->reward + $customer->old_reward,
+                        'old_reward' => 0
+                    ]);
+                }
+                $order->delete();
+
                 return back()->withErrors([
                     'paymentUrl_ERROR' => 'Error saat melakukan proses pembayaran! ' . $e->getMessage()
                 ]);
@@ -1551,6 +1729,15 @@ class OrderController extends Controller
         }
         if (Session::has('checkout.note')) {
             Session::forget('checkout.note');
+        }
+        if (Session::has('checkout.courier')) {
+            Session::forget('checkout.courier');
+        }
+        if (Session::has('checkout.service')) {
+            Session::forget('checkout.service');
+        }
+        if (Session::has('costs')) {
+            Session::forget('costs');
         }
         if (Session::has('pointStatus')) {
             Session::forget('pointStatus');

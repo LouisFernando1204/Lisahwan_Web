@@ -64,6 +64,8 @@ class CartController extends Controller
         $total_weight = $product->weight * $validatedData['quantity'];
 
         if ($validatedData['quantity'] <= $product->stock) {
+            $this->clearCheckoutSessions($cart);
+
             if (!$cart) {
                 $cart_new = Cart::create([
                     'user_id' => Auth::user()->id
@@ -237,6 +239,8 @@ class CartController extends Controller
         $total_weight = $cart_detail->product->weight * $validatedData['quantity'];
 
         if ($validatedData['quantity'] <= $cart_detail->product->stock) {
+            $this->clearCheckoutSessions($cart_detail->cart);
+
             $quantity_difference = $validatedData['quantity'] - $cart_detail->quantity;
             $product = $cart_detail->product;
             $product->update([
@@ -254,7 +258,7 @@ class CartController extends Controller
                     'date' => now(),
                     'product_id' => $product->id,
                     'quantity' => abs($quantity_difference),
-                    'type' => 'tambah'
+                    'type' => 'kurang'
                 ]);
             }
             $cart_detail->update([
@@ -283,19 +287,7 @@ class CartController extends Controller
         // Debug untuk memeriksa URL sebelumnya
         // dd($previousUrl);
 
-        // Pengecekan kondisi untuk district_id dan courier hanya jika URL sebelumnya adalah member/checkout
-        if (strpos($previousUrl, 'member/checkout') !== false) {
-            if (!$request->district_id && !$courier) {
-                return redirect()->back()->withErrors(['courierDistrictForgotten_error' => "Oops, anda lupa memilih jasa pengiriman dan kecamatan tujuan!"]);
-            }
-            if (!$request->district_id) {
-                return redirect()->back()->withErrors(['districtForgotten_error' => "Oops, anda lupa memilih kecamatan tujuan!"]);
-            }
-            if (!$courier) {
-                return redirect()->back()->withErrors(['courierForgotten_error' => "Oops, anda lupa memilih jasa pengiriman yang akan digunakan!"]);
-            }
-        }
-
+        // Removed validation to allow deletion of cart item even if district or courier is missing
         // Ambil detail keranjang yang akan dihapus
         $cartDetail = $cart->cart_detail->where('id', $id)->first();
         if ($cartDetail) {
@@ -309,7 +301,7 @@ class CartController extends Controller
 
             // Pengecekan dan pemanggilan API RajaOngkir hanya jika URL adalah member/checkout
             $costs = null;
-            if (strpos($previousUrl, 'member/checkout') !== false && $cart->cart_detail->count() > 0) {
+            if (strpos($previousUrl, 'member/checkout') !== false && $cart->cart_detail->count() > 0 && $request->district_id && $courier) {
                 $origin_id = 5902;
                 $destination_id = $request->district_id;
 
@@ -352,6 +344,8 @@ class CartController extends Controller
                 $cart->delete();
             }
 
+            $this->clearCheckoutSessions($cart);
+
             return back()->with([
                 'deleteCart_success' => 'Pesanan berhasil dihapus!',
                 'costs' => $costs
@@ -359,6 +353,58 @@ class CartController extends Controller
         }
 
         // Jika cartDetail tidak ditemukan
-        return back()->withErrors(provider: ['error' => 'Detail keranjang tidak ditemukan']);
+        return back()->withErrors(['error' => 'Detail keranjang tidak ditemukan']);
+    }
+
+    private function clearCheckoutSessions($cart = null)
+    {
+        // Restore cart detail prices first
+        if ($cart) {
+            foreach ($cart->cart_detail as $cart_detail) {
+                if (session()->has('originalPrice_' . $cart_detail->id)) {
+                    $originalPrice = session()->get('originalPrice_' . $cart_detail->id);
+                    $cart_detail->update(['price' => $originalPrice]);
+                    session()->forget('originalPrice_' . $cart_detail->id);
+                }
+            }
+        }
+
+        $activeCoupons = session()->get('activeCoupons', []);
+        foreach ($activeCoupons as $couponId) {
+            // Restore coupon quantity to user's inventory
+            $activeCoupon = \App\Models\Coupon::find($couponId);
+            if ($activeCoupon) {
+                $userCoupon = $activeCoupon->usercoupon->where('user_id', Auth::user()->id)->where('coupon_id', $couponId)->first();
+                if ($userCoupon) {
+                    $userCoupon->update(['quantity' => $userCoupon->quantity + 1]);
+                }
+            }
+            session()->forget('couponStatus_' . $couponId);
+        }
+        session()->forget('activeCoupons');
+
+        $activeCouriersStatus = session()->get('arraycourierStatus', []);
+        foreach ($activeCouriersStatus as $courierStatus) {
+            session()->forget('courierStatus_' . $courierStatus);
+        }
+        session()->forget('arraycourierStatus');
+
+        $activeCostStatus = session()->get('arraycostStatus', []);
+        foreach ($activeCostStatus as $costStatus) {
+            session()->forget($costStatus);
+        }
+        session()->forget('arraycostStatus');
+
+        session()->forget('checkout.address_id');
+        session()->forget('checkout.address');
+        session()->forget('checkout.city');
+        session()->forget('checkout.city_id');
+        session()->forget('checkout.province_id');
+        session()->forget('checkout.district_id');
+        session()->forget('checkout.note');
+        session()->forget('checkout.courier');
+        session()->forget('checkout.service');
+        session()->forget('costs');
+        session()->forget('pointStatus');
     }
 }

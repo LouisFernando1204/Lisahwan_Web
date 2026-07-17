@@ -1095,6 +1095,18 @@ class OrderController extends Controller
                     ]);
                 }
 
+                if (!empty($waybills['delivery_status']['pod_date'])) {
+                    $podDate = $waybills['delivery_status']['pod_date'];
+                    if (!empty($waybills['delivery_status']['pod_time'])) {
+                        $podDate .= ' ' . $waybills['delivery_status']['pod_time'];
+                    }
+
+                    $order->update([
+                        'arrived_date' => $podDate,
+                        'acceptbyCustomer_status' => 'sudah'
+                    ]);
+                }
+
                 return redirect()->route('owner.order_history')->with('updateOrderStatus_success', 'Status order berhasil diperbarui!');
             } else {
                 return redirect()->back()->withErrors([

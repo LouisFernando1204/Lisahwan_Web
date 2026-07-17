@@ -137,6 +137,36 @@
                 </div>
             </div>
         @enderror
+        @error('courier')
+            <div data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
+                class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('courier') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
+                role="alert">
+                <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                    <span class="font-medium">{{ $message }}
+                </div>
+            </div>
+        @enderror
+        @error('service')
+            <div data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
+                class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('service') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
+                role="alert">
+                <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                    <span class="font-medium">{{ $message }}
+                </div>
+            </div>
+        @enderror
         @error('courierForgotten_error')
             <div data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                 class="w-10/12 md:w-9/12 lg:w-6/12 flex justify-center items-center p-4 {{ $errors->has('courierForgotten_error') ? 'mt-8' : '' }} text-sm rounded-lg bg-gray-900 text-red-400"
@@ -287,8 +317,8 @@
                         @csrf
                         <input type="hidden" value="{{ $total_poin }}" name="total_poin">
                         <input type="hidden" value="{{ $reward_now }}" name="reward_now">
-                        <input type="hidden" id="courier_hidden" value="" name="courier">
-                        <input type="hidden" id="service_hidden" value="" name="service">
+                        <input type="hidden" id="courier_hidden" value="{{ session('checkout.courier', '') }}" name="courier">
+                        <input type="hidden" id="service_hidden" value="{{ session('checkout.service', '') }}" name="service">
                         <input type="hidden" id="final_province_id" name="province_id"
                             value="{{ old('province_id', session('checkout.province_id')) }}">
                         <input type="hidden" id="final_city_id" name="city_id"
@@ -1329,6 +1359,7 @@
             // D. Sinkronisasi ke Form "Toggle Poin"
             syncInput('#address_id', '#addressHide_id');
             syncInput('#address', '#addressHide');
+            syncInput('#province_id', '#provinceHide');
             syncInput('#city_id', '#cityHide');
             syncInput('#district_id', '#districtHide');
             syncInput('#note', '#noteHide');
@@ -1378,11 +1409,18 @@
                     $('.courier-checkbox').not(this).prop('checked', false);
                 }
                 updateCourierHidden();
+                // Clear selected service when courier changes, forcing user to pick again
+                $('#service_hidden').val('');
+                $('.cost-checkbox').prop('checked', false);
+                // Hide old costs list if any, so user knows they must click Cek Ongkir
+                $('.cost-checkbox').closest('div.bg-gray-900').hide();
             });
 
             function updateCostHidden() {
-                var checkedValue = $('.cost-checkbox:checked').val();
-                $('#service_hidden').val(checkedValue || '');
+                if ($('.cost-checkbox').length > 0) {
+                    var checkedValue = $('.cost-checkbox:checked').val();
+                    $('#service_hidden').val(checkedValue || '');
+                }
             }
             updateCostHidden();
             $('.cost-checkbox').on('change', function() {
