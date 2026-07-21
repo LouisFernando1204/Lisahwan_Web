@@ -1483,7 +1483,7 @@ class OrderController extends Controller
             $total_price = $cart_details->sum('price') + $shipment_price + $admin_fee;
         }
 
-        $midtrans_order_id = rand();
+        $midtrans_order_id = time() . rand(100, 999);
 
         if ($validatedData['address_id'] != 0) {
             $address = Address::find($validatedData['address_id']);
