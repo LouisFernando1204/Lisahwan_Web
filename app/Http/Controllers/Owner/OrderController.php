@@ -178,11 +178,13 @@ class OrderController extends Controller
             }
         }
 
+        $ordersQuery->where('acceptbyAdmin_status', 'paid');
+
         // Count total orders
         $totalOrders = $ordersQuery->count();
 
         // Count total price
-        $totalPrice = number_format($ordersQuery->where(column: 'acceptbyAdmin_status', operator: 'paid')->sum('total_price'), 0, ',', '.');
+        $totalPrice = number_format($ordersQuery->sum('total_price'), 0, ',', '.');
 
         // Query orders by date criteria
         $orders = $ordersQuery
@@ -792,11 +794,13 @@ class OrderController extends Controller
             }
         }
 
+        $ordersQuery->where('acceptbyAdmin_status', 'paid');
+
         // Count total orders
         $totalOrders = $ordersQuery->count();
 
         // Count total price
-        $totalPrice = number_format($ordersQuery->where(column: 'acceptbyAdmin_status', operator: 'paid')->sum('total_price'), 0, ',', '.');
+        $totalPrice = number_format($ordersQuery->sum('total_price'), 0, ',', '.');
 
         // Query orders by date criteria
         $orders = $ordersQuery->orderBy('created_at', 'desc')

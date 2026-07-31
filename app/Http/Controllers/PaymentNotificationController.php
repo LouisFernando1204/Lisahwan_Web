@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Production;
+use App\Models\User;
 use Midtrans\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,16 +34,34 @@ class PaymentNotificationController extends Controller
 
         if ($hashed == $signatureKey) {
             if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
+                $isSuccess = false;
                 if ($paymentType == 'credit_card' && $transactionStatus == 'capture' && $fraudStatus == 'accept') {
-                    if ($order) {
-                        $order->update(['acceptbyAdmin_status' => 'paid']);
-                    }
-                    return response()->json(['message' => 'Payment successful and processed.']);
+                    $isSuccess = true;
                 } elseif ($transactionStatus == 'settlement') {
+                    $isSuccess = true;
+                }
+
+                if ($isSuccess) {
                     if ($order) {
                         $order->update(['acceptbyAdmin_status' => 'paid']);
+
+                        $cart = Cart::where('user_id', $order->user_id)->first();
+                        if ($cart) {
+                            $customer = User::where('id', $order->user_id)->first();
+                            if ($customer) {
+                                $customer->update([
+                                    'reward' => $customer->reward + $cart->total_poin
+                                ]);
+                            }
+                            $cart->delete();
+                        }
                     }
-                    return response()->json(['message' => 'Settlement payment successful and processed.', 'notification' => $notification->getResponse()]);
+
+                    if ($transactionStatus == 'capture') {
+                        return response()->json(['message' => 'Payment successful and processed.']);
+                    } else {
+                        return response()->json(['message' => 'Settlement payment successful and processed.', 'notification' => $notification->getResponse()]);
+                    }
                 }
             } elseif ($transactionStatus == 'pending') {
                 if ($order) {

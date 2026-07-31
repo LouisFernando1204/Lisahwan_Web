@@ -135,10 +135,12 @@ class OrderController extends Controller
             if (Session::has('pointStatus')) {
                 Session::forget('pointStatus');
             }
-            $customer->update([
-                'reward' => $customer->reward + $cart->total_poin
-            ]);
-            $cart->delete();
+            if ($cart) {
+                $customer->update([
+                    'reward' => $customer->reward + $cart->total_poin
+                ]);
+                $cart->delete();
+            }
             return redirect()->route('member.orderhistory')->with('capturePayment_SUCCESSFULL', "Pesanan anda berhasil! Tinjau status pesanan anda disini!");
         } elseif ($transactionStatus == 'settlement') {
             if ($cart) {
@@ -216,10 +218,12 @@ class OrderController extends Controller
             if (Session::has('pointStatus')) {
                 Session::forget('pointStatus');
             }
-            $customer->update([
-                'reward' => $customer->reward + $cart->total_poin
-            ]);
-            $cart->delete();
+            if ($cart) {
+                $customer->update([
+                    'reward' => $customer->reward + $cart->total_poin
+                ]);
+                $cart->delete();
+            }
             return redirect()->route('member.orderhistory')->with('settlementPayment_SUCCESSFULL', "Pesanan anda berhasil! Tinjau status pesanan anda disini!");
         } elseif ($transactionStatus == 'pending') {
             $customer->update([
