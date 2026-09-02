@@ -68,7 +68,7 @@
 
             <iframe data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                 class="mx-auto w-full px-3 md:px-6 lg:px-20 h-screen shadow-lg mt-2 lg:mt-6"
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7979.636635896026!2d-0.0029405!3d0.0019853!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc6f7102d2b%3A0x3cd7c22202c39420!2sLisahwan!5e0!3m2!1sen!2sid!4v1788358616901!5m2!1sen!2sid"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d989.3062770973291!2d112.73358596959756!3d-7.328595369393088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc6f7102d2b%3A0x3cd7c22202c39420!2sLisahwan!5e0!3m2!1sen!2sid!4v1788361421546!5m2!1sen!2sid"
                 width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
                 referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
