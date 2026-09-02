@@ -60,7 +60,7 @@
                     href="https://shopee.co.id/lisahwan" target="_blank" class="m-auto">
                     <button type="button" data-te-ripple-init data-te-ripple-color="light"
                         class="flex justify-center items-center inline-block rounded-lg px-3 py-2.5 text-xs font-medium leading-normal text-white shadow-md bg-orange-500 hover:bg-orange-600">
-                        <img src="/images/shopee_logo.png" class="w-8" alt="Tokopedia">
+                        <img src="/images/shopee_logo.png" class="w-8" alt="Shopee">
                         <p class="ml-2 text-xl">Lisahwan</p>
                     </button>
                 </a>
@@ -68,9 +68,9 @@
 
             <iframe data-aos="fade-up" data-aos-anchor-placement="top-bottom" data-aos-duration="800"
                 class="mx-auto w-full px-3 md:px-6 lg:px-20 h-screen shadow-lg mt-2 lg:mt-6"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.2250965699677!2d112.7342297!3d-7.3285967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fb41eea3ee81%3A0x83d2a1606a6f6179!2sJl.%20Jemur%20Andayani%20XIII%20No.6%2C%20Jemur%20Wonosari%2C%20Kec.%20Wonocolo%2C%20Surabaya%2C%20Jawa%20Timur%2060237!5e0!3m2!1sen!2sid!4v1703209712146!5m2!1sen!2sid"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7979.636635896026!2d-0.0029405!3d0.0019853!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc6f7102d2b%3A0x3cd7c22202c39420!2sLisahwan!5e0!3m2!1sen!2sid!4v1788358616901!5m2!1sen!2sid"
                 width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
     </section>
 @endsection
